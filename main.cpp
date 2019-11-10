@@ -1,11 +1,9 @@
 #include <iostream>
 #include "Angel.h"
-
+#include "camera.h"
 
 using namespace std;
-#pragma warning(disable : 4996)
-
-
+#pragma warning(disable : 4996)//needed to getting the shader importer to work
 
 
 //this is need to import the shader to the grapics card
@@ -160,7 +158,7 @@ void init()
   glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
 
   // Load shaders and use the resulting shader program
-  GLuint program = InitShader("vshaderTriangle.glsl", "fshaderTriangle.glsl");
+  GLuint program = InitShader("vshader.glsl", "fshader.glsl");
   glUseProgram(program);
 
   // Initialize the vertex position attribute from the vertex shader
