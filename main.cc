@@ -14,7 +14,7 @@
 #include "Angel.h"
 #include "cube.h"
 #include "world.h"
-
+#include "camera.h"
 
 const int NumVertices = 36; //(6 faces)(2 triangles/face)(3 vertices/triangle)
 const int NumOFBlocks = 1;
@@ -138,7 +138,7 @@ namespace Angel {
 // Adjust this value for your taste (to speed up, make bigger, to
 // slow down rotation, make smaller
 GLfloat incr =0.06;
-const static int numOfObjects =1;
+const static int numOfObjects =3;
 int axis = 0;
 float theta[3] = {0.0, 0.0, 0.0};
 
@@ -152,9 +152,10 @@ bool testcube = false;
 
 bool game = false;
 //pointers for objects to draw
-
+camera* cam;
 cube* baseCube;
 cube* outline;
+cube* outline2;
 
 world* w1;
 GLuint program;
@@ -181,24 +182,27 @@ mat4 model_view; //the transfermations per objects based off the position of the
 // OpenGL initialization
 
 
-//custom cammra stuff
-vec3 cameraPos = vec3(0.0f, 0.0f, 3.0f);  
 
+//bools for interaction
+bool interact = false;
+
+bool inroom1 = true;
+
+int openwalls =0;
+
+
+
+
+//Everything to do with the camera
+vec3 cameraPos = vec3(0.0f, 0.0f, 3.0f);  
 vec3 cameraTarget = vec3(0.0f, 0.0f, 0.0f);
 vec3 cameraDirection = normalize(cameraPos - cameraTarget);
-
 vec3 up = vec3(0.0f, 1.0f, 0.0f); 
 vec3 cameraRight = normalize(cross(up, cameraDirection));
-
 vec3 cameraUp = cross(cameraDirection, cameraRight);
-
-mat4 view = LookAt(vec3(0.0f, 0.0f, 3.0f), 
-  		   vec3(0.0f, 0.0f, 0.0f), 
-  		   vec3(0.0f, 1.0f, 0.0f));
-
-//vec3 cameraPos   = vec3(0.0f, 0.0f,  3.0f);
+mat4 view = LookAt(vec3(0.0f, 0.0f, 3.0f),  vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
 vec3 cameraFront = vec3(0.0f, 0.0f, -1.0f);
-//vec3 cameraUp    = vec3(0.0f, 1.0f,  0.0f);
+float cameraSpeed = 0.1f;
 
 //window vars
 int Wheight =900;
@@ -212,235 +216,14 @@ bool mbackward = false;
 bool mup = false;
 bool mdown = false;
 
-//bools for interaction
-bool interact = false;
-
-bool inroom1 = true;
-
-int openwalls =0;
-
-void init() {
-
-	// Create a vertex array object
-	GLuint vao;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-
-	// set up vertex buffer object
-
-	glGenBuffers(1, buffers);
-	glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
-	glBufferData(GL_ARRAY_BUFFER, (baseCube->get_points_size() + baseCube->get_quad_color_size()) * numOfObjects, NULL, GL_STATIC_DRAW);
-	std::cout << baseCube->get_points_size() << std::endl;
-	program = InitShader("vshader.glsl", "fshader.glsl");
-	glUseProgram(program);
-
-	loc = glGetAttribLocation(program, "vPosition");
-	glEnableVertexAttribArray(loc);
-	glVertexAttribPointer(loc, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-
-	loc2 = glGetAttribLocation(program, "vColor");
-	glEnableVertexAttribArray(loc2);
-	glVertexAttribPointer(loc2, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(baseCube->get_points_size()));
-
-	Modelview = glGetUniformLocation(program, "model_view");
-	Modeltrans = glGetUniformLocation(program, "model_trans");
-  	Projection = glGetUniformLocation(program, "Projection");
-
-	//uncomment this for the wire frame model
-	//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-
-	glClearColor(1.0, 1.0, 1.0, 1.0); // white background
-}
-
-extern "C" void display() {
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // clear the window
-	if (!game){
-		if (basecube) {
-			baseCube->draw();
-			
-		}
-		if (testcube) {
-			outline->draw();
-		}
-
-	}else{
-		w1->updatePlayerpos(cameraPos);
-		w1->draw();
-	}
-	glutSwapBuffers();
-}
-
-//mouse vars
-
-
-extern "C" void mouse(int btn, int state, int xpos, int ypos) {
-	if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN) axis = 0;
-	if (btn == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN) axis = 1;
-	if (btn == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) axis = 2;
-
-
-}
-
-void idle() {
-
-	static GLint time = glutGet(GLUT_ELAPSED_TIME);
-	GLint deltatime = (glutGet(GLUT_ELAPSED_TIME) - time);
-	
-
-			theta[axis] += incr * (deltatime);
-
-			baseCube->updateAngle(theta);
-			outline->updateAngle(theta);
-			if (theta[axis] > 360.0) theta[axis] -= 360.0;
-		
-
-
-	time = glutGet(GLUT_ELAPSED_TIME);
-
-
-	point4 eye2(1000, 10000, -10, 1.0);
-	point4 at2(-0, -0,-0, 1.0);
-  //model_view = LookAt(eye2, at2, up);
-  //std::cout<<model_view<<std::endl;
-
-	// deal with movement
-	float cameraSpeed = 0.1f;
-	//std::cout<<cameraSpeed<<std::endl;
-	bool movement = false;
-	vec3 temp = cameraPos;
-	if(mforward){
-		cameraPos += cameraSpeed * cameraFront;
-		mforward = false;
-		movement = true;
-	}
-	if (mbackward){
-		cameraPos -= cameraSpeed * cameraFront;
-		mbackward= false;
-		movement = true;
-	}
-	if(mleft){
-		cameraPos -= normalize(cross(cameraFront, cameraUp)) * cameraSpeed;
-		mleft= false;
-		movement = true;
-	}
-	if(mright){
-		cameraPos += normalize(cross(cameraFront, cameraUp)) * cameraSpeed;
-	mright= false;
-	movement = true;
-	}
-	if(mup){
-		cameraPos.y += cameraSpeed;
-		mup = false;
-		movement = true;
-	}
-	if(mdown){
-		cameraPos.y -= cameraSpeed;
-		mdown = false;
-		movement = true;
-	}
-	// check for collision
-	if(movement){
-		
-
-	}
-
-	if(interact){
-		
-
-
-	}
-
-  mat4 view = LookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-  glUniformMatrix4fv(Modelview, 1, GL_TRUE, ( view));
-
-	glutPostRedisplay();
-}
-
-extern "C" void mykey(unsigned char key, int mousex, int mousey) {
-	//float cameraSpeed = 2.5f;
-	switch (key)
-	{
-	case 'q':
-	case 'Q':
-		exit(0);
-		break;
-	case 'r':
-		rotate = !rotate;
-		break;
-
-	case 'w':
-		mforward = true;
-		//cameraPos += cameraSpeed * cameraFront;
-		break;
-	case 's':
-	mbackward = true;
-		//cameraPos -= cameraSpeed * cameraFront;
-		break;		
-	case 'a':
-	mleft = true;
-			//cameraPos -= normalize(cross(cameraFront, cameraUp)) * cameraSpeed;
-   		 break;
-	case 'd':
-	mright = true;
-		//cameraPos += normalize(cross(cameraFront, cameraUp)) * cameraSpeed;
-		break;
-	case ' ':
-	mup = true;
-	break;
-
-	case 'e':
-	mdown = true;
-	break;
-
-	case 'f':
-		interact = true;
-	break;
-
-	case '1':
-		basecube = !basecube;
-		break;
-
-	case '2':
-		testcube = !testcube;
-		break;
-
-
-	default:
-		// glutSetWindowTitle(key);
-		break;
-	}
-
-}
-
-extern "C" void menustatus(int status, int x, int y) {
-	axis = 2;
-	glutPostRedisplay();
-}
-
-extern "C" void myMenu(int value){
-	switch (value) {
-	case 0:
-
-		break;
-	case 1:
-
-		break;
-	case 3:
-
-		break;
-	case 4:
-
-		break;
-	case 5:
-
-		break;
-	default:
-		break;
-	}
-	glutPostRedisplay();
-}
+//vars for the first person 
+//float lastX = 450, lastY = 450;
+bool firstMouse = true;
+float yaw   =  -90.0f;	// yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
+float pitch =  0.0f;
+float lastX =  450.0f;
+float lastY =  450;
+float fov   =  45.0f;
 
 extern "C" void reshape(int width, int height){
   glViewport(0, 0, width, height);
@@ -475,38 +258,57 @@ extern "C" void reshape(int width, int height){
    // mat4 projection = Ortho(left, right, bottom, top, zNear, zFar);
   glUniformMatrix4fv(Projection, 1, GL_TRUE, projection);
 }
-// Create menu items
-void setupMenu() {
-	glutCreateMenu(myMenu);
-	glutAddMenuEntry("draw table", 0);
-	glutAddMenuEntry("draw chair", 1);
-	glutAddMenuEntry("draw small table", 3);
-	glutAddMenuEntry("game", 4);
-	glutAttachMenu(GLUT_RIGHT_BUTTON);
+
+
+void moveCam() {
+	if (mforward) {
+		cameraPos += cameraSpeed * cameraFront;
+		mforward = false;
+	}
+	if (mbackward) {
+		cameraPos -= cameraSpeed * cameraFront;
+		mbackward = false;
+	}
+	if (mleft) {
+		cameraPos -= normalize(cross(cameraFront, cameraUp)) * cameraSpeed;
+		mleft = false;
+	}
+	if (mright) {
+		cameraPos += normalize(cross(cameraFront, cameraUp)) * cameraSpeed;
+		mright = false;
+	}
+	if (mup) {
+		cameraPos.y += cameraSpeed;
+		mup = false;
+	}
+	if (mdown) {
+		cameraPos.y -= cameraSpeed;
+		mdown = false;
+	}
+
+
+	mat4 view = LookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+	glUniformMatrix4fv(Modelview, 1, GL_TRUE, (view));
 }
 
-void myinit(){
-	baseCube = new cube();
-	baseCube->setindex(0);
-	baseCube->setModelVeiw(Modeltrans);
-	baseCube->init();
-
-	outline = new cube();
-	outline->setModelVeiw(Modeltrans);
-	outline->setindex(0);
-	outline->setColor(color4(1.0, 0.0, 0.0, 1.0));
-	outline->init();
-	outline->setLoc(vec3(0, 1, 0));
-	w1 = new world();
+void Setmforward() {
+	mforward = true;
 }
-
-//float lastX = 450, lastY = 450;
-bool firstMouse = true;
-float yaw   =  -90.0f;	// yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
-float pitch =  0.0f;
-float lastX =  450.0f;
-float lastY =  450;
-float fov   =  45.0f;
+void Setmleft() {
+	mleft = true;
+}
+void Setmright() {
+	mright = true;
+}
+void Setmbackward() {
+	mbackward = true;
+}
+void Setmup() {
+	mup = true;
+}
+void Setmdown() {
+	mdown = true;
+}
 
 
 extern "C" void motion(int xpos, int ypos)
@@ -557,6 +359,228 @@ extern "C" void motion(int xpos, int ypos)
 
   glutPostRedisplay();
 }
+
+//the rest of the program
+
+
+void init() {
+
+	// Create a vertex array object
+	GLuint vao;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+	// set up vertex buffer object
+
+	glGenBuffers(1, buffers);
+	glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
+	glBufferData(GL_ARRAY_BUFFER, (baseCube->get_points_size() + baseCube->get_quad_color_size()) * numOfObjects, NULL, GL_STATIC_DRAW);
+	std::cout << baseCube->get_points_size() << std::endl;
+	program = InitShader("vshader.glsl", "fshader.glsl");
+	glUseProgram(program);
+
+	loc = glGetAttribLocation(program, "vPosition");
+	glEnableVertexAttribArray(loc);
+	glVertexAttribPointer(loc, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+
+	loc2 = glGetAttribLocation(program, "vColor");
+	glEnableVertexAttribArray(loc2);
+	glVertexAttribPointer(loc2, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(baseCube->get_points_size()));
+
+	Modelview = glGetUniformLocation(program, "model_view");
+	Modeltrans = glGetUniformLocation(program, "model_trans");
+  	Projection = glGetUniformLocation(program, "Projection");
+
+	//uncomment this for the wire frame model
+	//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+
+	glClearColor(1.0, 1.0, 1.0, 1.0); // white background
+}
+
+extern "C" void display() {
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // clear the window
+	if (!game){
+		if (basecube) {
+			baseCube->draw();
+			
+		}
+		if (testcube) {
+			outline->draw();
+			outline2->draw();
+		}
+
+	}else{
+		w1->updatePlayerpos(cameraPos);
+		w1->draw();
+	}
+	glutSwapBuffers();
+}
+
+//mouse vars
+
+
+extern "C" void mouse(int btn, int state, int xpos, int ypos) {
+	if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN) axis = 0;
+	if (btn == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN) axis = 1;
+	if (btn == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) axis = 2;
+}
+
+void idle() {
+
+	static GLint time = glutGet(GLUT_ELAPSED_TIME);
+	GLint deltatime = (glutGet(GLUT_ELAPSED_TIME) - time);
+
+
+	theta[axis] += incr * (deltatime);
+
+	baseCube->updateAngle(theta);
+	outline->updateAngle(theta);
+	outline2->updateAngle(theta);
+
+	if (theta[axis] > 360.0) theta[axis] -= 360.0;
+
+
+
+	time = glutGet(GLUT_ELAPSED_TIME);
+
+
+
+	  // deal with movement
+
+	moveCam();
+
+	// check for collision
+
+
+	if (interact) {
+
+
+
+	}
+
+
+
+	glutPostRedisplay();
+}
+
+extern "C" void mykey(unsigned char key, int mousex, int mousey) {
+	//float cameraSpeed = 2.5f;
+	switch (key)
+	{
+	case 'q':
+	case 'Q':
+		exit(0);
+		break;
+	case 'r':
+		rotate = !rotate;
+		break;
+
+	case 'w':
+		Setmforward();
+		//cameraPos += cameraSpeed * cameraFront;
+		break;
+	case 's':
+		Setmbackward();
+		//cameraPos -= cameraSpeed * cameraFront;
+		break;
+	case 'a':
+		Setmleft();
+		//cameraPos -= normalize(cross(cameraFront, cameraUp)) * cameraSpeed;
+		break;
+	case 'd':
+		Setmright();
+		//cameraPos += normalize(cross(cameraFront, cameraUp)) * cameraSpeed;
+		break;
+	case ' ':
+		Setmup();
+		break;
+
+	case 'e':
+		Setmdown();
+		break;
+
+	case 'f':
+		interact = true;
+		break;
+
+	case '1':
+		basecube = !basecube;
+		break;
+
+	case '2':
+		testcube = !testcube;
+		break;
+
+
+	default:
+		// glutSetWindowTitle(key);
+		break;
+	}
+
+}
+
+extern "C" void menustatus(int status, int x, int y) {
+	axis = 2;
+	glutPostRedisplay();
+}
+
+extern "C" void myMenu(int value){
+	switch (value) {
+	case 0:
+
+		break;
+	case 1:
+
+		break;
+	case 3:
+
+		break;
+	case 4:
+
+		break;
+	case 5:
+
+		break;
+	default:
+		break;
+	}
+	glutPostRedisplay();
+}
+
+// Create menu items
+void setupMenu() {
+	glutCreateMenu(myMenu);
+	glutAddMenuEntry("draw table", 0);
+	glutAddMenuEntry("draw chair", 1);
+	glutAddMenuEntry("draw small table", 3);
+	glutAddMenuEntry("game", 4);
+	glutAttachMenu(GLUT_RIGHT_BUTTON);
+}
+
+void myinit(){
+	baseCube = new cube();
+	baseCube->setindex(0);
+	baseCube->setModelVeiw(Modeltrans);
+	baseCube->init();
+
+	outline = new cube();
+	outline->setModelVeiw(Modeltrans);
+	outline->setindex(1);
+	outline->setColor(color4(1.0, 0.0, 0.0, 1.0));
+	outline->init();
+	outline->setLoc(vec3(0, 1, 0));
+
+	outline2 = new cube();
+	outline2->setModelVeiw(Modeltrans);
+	outline2->setindex(2);
+	outline2->setColor(color4(0.0, 0.0, 1.0, 1.0));
+	outline2->init();
+	outline2->setLoc(vec3(1, 1, 0));
+
+	w1 = new world();
+}
+
 
 int main(int argc, char** argv){
 

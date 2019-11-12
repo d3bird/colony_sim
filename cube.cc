@@ -144,8 +144,13 @@ void cube::draw() {
 
 	calTranMat();
 	//std::cout << temp << std::endl;
-	glDrawArrays(GL_TRIANGLES, NumVertices * placeIndex, NumVertices * (placeIndex+1)); // the top of the table
 
+	//if (placeIndex == 0) {
+	//	glDrawArrays(GL_TRIANGLES, 0, NumVertices); // the top of the table
+	//}
+	//else {
+glDrawArrays(GL_TRIANGLES, NumVertices * placeIndex, NumVertices * (placeIndex + 1)); // the top of the table
+	//}
 
 }
 
@@ -157,10 +162,13 @@ void cube::update(){
 void cube::init() {
 	calTranMat();
 	colorcube();
-	//glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(points), points);//old way
-	//glBufferSubData(GL_ARRAY_BUFFER, sizeof(points), sizeof(quad_color), quad_color);
-	glBufferSubData(GL_ARRAY_BUFFER, sizeof(points) * placeIndex, sizeof(points) * (placeIndex + 1), points);//new way with buffer indexing
-	glBufferSubData(GL_ARRAY_BUFFER, sizeof(points) * (placeIndex + 1), sizeof(quad_color), quad_color);
-
+	//if (placeIndex == 0) {
+	//	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(points), points);//old way
+	//	glBufferSubData(GL_ARRAY_BUFFER, sizeof(points), sizeof(quad_color), quad_color);
+	//}
+	//else {
+		glBufferSubData(GL_ARRAY_BUFFER, sizeof(points) * placeIndex, sizeof(points), points);
+		glBufferSubData(GL_ARRAY_BUFFER, sizeof(points) * (placeIndex + 1), sizeof(quad_color), quad_color);
+	//}
 	glUniformMatrix4fv(trans, 1, GL_TRUE, (model_veiw_base));
 }
