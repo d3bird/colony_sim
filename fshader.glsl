@@ -1,7 +1,6 @@
-// Varying means to interpolate the variable across the object
-varying vec4 fColor;
+varying vec4 color;
+void main() 
+{ 
+  gl_FragColor = color;
+} 
 
-void main()
-{
-  gl_FragColor = fColor;
-}
