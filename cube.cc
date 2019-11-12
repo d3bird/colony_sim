@@ -29,7 +29,7 @@ cube::cube() {
 
 
 	loc.x = 0;
-	loc.y = 1;
+	loc.y = 0;
 	loc.z = 0;
 
 	special = false;
@@ -48,7 +48,7 @@ cube::cube() {
 
 	tloc = Translate(loc.x, loc.y, loc.z);// the location of the table
 
-
+	placeIndex = 0;
 	//Modeltrans = 0;
 	//init();
 }
@@ -125,26 +125,7 @@ void cube::colorcube() {
 	MyQuad(6, 5, 1, 2);
 	MyQuad(4, 5, 6, 7);
 	MyQuad(5, 4, 0, 1);
-
 }
-
-void cube::changeScale(int i) {
-
-	//the table
-	vertices[0] = point4(-(width + scale), -(height + scale), (length + scale), 1.0);
-	vertices[1] = point4(-(width + scale), (height + scale), (length + scale), 1.0);
-	vertices[2] = point4((width + scale), (height + scale), (length + scale), 1.0);
-	vertices[3] = point4((width + scale), -(height + scale), (length + scale), 1.0);
-	vertices[4] = point4(-(width + scale), -(height + scale), -(length + scale), 1.0);
-	vertices[5] = point4(-(width + scale), (height + scale), -(length + scale), 1.0);
-	vertices[6] = point4((width + scale), (height + scale), -(length + scale), 1.0);
-	vertices[7] = point4((width + scale), -(height + scale), -(length + scale), 1.0);
-
-
-}
-
-void cube::increaseScale(){changeScale(scale+=5);}
-void cube::decreaseScale(){changeScale(scale-=5);}
 
 
 
@@ -161,11 +142,9 @@ void cube::draw() {
 	//calTranMat();
 	//colorcube();
 
-	//glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(points), points);
-	//glBufferSubData(GL_ARRAY_BUFFER, sizeof(points), sizeof(quad_color), quad_color);
 	calTranMat();
 	//std::cout << temp << std::endl;
-	glDrawArrays(GL_TRIANGLES, 0, 36); // the top of the table
+	glDrawArrays(GL_TRIANGLES, NumVertices * placeIndex, NumVertices * (placeIndex+1)); // the top of the table
 
 
 }
@@ -178,7 +157,10 @@ void cube::update(){
 void cube::init() {
 	calTranMat();
 	colorcube();
-	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(points), points);
-	glBufferSubData(GL_ARRAY_BUFFER, sizeof(points), sizeof(quad_color), quad_color);
+	//glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(points), points);//old way
+	//glBufferSubData(GL_ARRAY_BUFFER, sizeof(points), sizeof(quad_color), quad_color);
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(points) * placeIndex, sizeof(points) * (placeIndex + 1), points);//new way with buffer indexing
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(points) * (placeIndex + 1), sizeof(quad_color), quad_color);
+
 	glUniformMatrix4fv(trans, 1, GL_TRUE, (model_veiw_base));
 }

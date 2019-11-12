@@ -36,15 +36,14 @@ public:
 
 	void setModelVeiw(GLuint i) { trans = i; }
 
-	void changeScale(int i);
-	void increaseScale();
-	void decreaseScale();
+	void setindex(int i) { placeIndex = i; }
 
 	void calTranMat();
 	void setLoc(vec3 i);
 
 	int getHeight(){return  length;}
 
+	void setColor(color4 i){material_diffuse =i; colorcube();}
 
 	//old code
 	void updateVeiwer(vec4 i){ viewer =i;}
@@ -52,7 +51,7 @@ public:
 	bool isspecial(){return special;}
 	void setspecial(bool i){special =i;}
 
-	void setColor(color4 i){material_diffuse =i;}
+	
 private:
 
 	vec4 product(vec4 a, vec4 b) {
@@ -90,7 +89,7 @@ private:
 	int length;//
 	int height;//
 
-
+	int placeIndex;
 
 	//rotation transformation 
 	mat4 ctm;

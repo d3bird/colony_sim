@@ -138,7 +138,7 @@ namespace Angel {
 // Adjust this value for your taste (to speed up, make bigger, to
 // slow down rotation, make smaller
 GLfloat incr =0.06;
-
+const static int numOfObjects =1;
 int axis = 0;
 float theta[3] = {0.0, 0.0, 0.0};
 
@@ -148,11 +148,14 @@ GLint matrix_loc;
 
 bool rotate = true;
 bool basecube = true;
+bool testcube = false;
 
 bool game = false;
 //pointers for objects to draw
 
 cube* baseCube;
+cube* outline;
+
 world* w1;
 GLuint program;
 
@@ -227,7 +230,7 @@ void init() {
 
 	glGenBuffers(1, buffers);
 	glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
-	glBufferData(GL_ARRAY_BUFFER, baseCube->get_points_size() + baseCube->get_quad_color_size(), NULL, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, (baseCube->get_points_size() + baseCube->get_quad_color_size()) * numOfObjects, NULL, GL_STATIC_DRAW);
 	std::cout << baseCube->get_points_size() << std::endl;
 	program = InitShader("vshader.glsl", "fshader.glsl");
 	glUseProgram(program);
@@ -256,6 +259,10 @@ extern "C" void display() {
 	if (!game){
 		if (basecube) {
 			baseCube->draw();
+			
+		}
+		if (testcube) {
+			outline->draw();
 		}
 
 	}else{
@@ -276,7 +283,7 @@ extern "C" void mouse(int btn, int state, int xpos, int ypos) {
 
 }
 
-void spinCube() {
+void idle() {
 
 	static GLint time = glutGet(GLUT_ELAPSED_TIME);
 	GLint deltatime = (glutGet(GLUT_ELAPSED_TIME) - time);
@@ -285,6 +292,7 @@ void spinCube() {
 			theta[axis] += incr * (deltatime);
 
 			baseCube->updateAngle(theta);
+			outline->updateAngle(theta);
 			if (theta[axis] > 360.0) theta[axis] -= 360.0;
 		
 
@@ -390,6 +398,14 @@ extern "C" void mykey(unsigned char key, int mousex, int mousey) {
 		interact = true;
 	break;
 
+	case '1':
+		basecube = !basecube;
+		break;
+
+	case '2':
+		testcube = !testcube;
+		break;
+
 
 	default:
 		// glutSetWindowTitle(key);
@@ -471,8 +487,16 @@ void setupMenu() {
 
 void myinit(){
 	baseCube = new cube();
+	baseCube->setindex(0);
 	baseCube->setModelVeiw(Modeltrans);
 	baseCube->init();
+
+	outline = new cube();
+	outline->setModelVeiw(Modeltrans);
+	outline->setindex(0);
+	outline->setColor(color4(1.0, 0.0, 0.0, 1.0));
+	outline->init();
+	outline->setLoc(vec3(0, 1, 0));
 	w1 = new world();
 }
 
@@ -544,7 +568,7 @@ int main(int argc, char** argv){
 	glutDisplayFunc(display);
 	glutMouseFunc(mouse);
 	glutReshapeFunc(reshape);
-	glutIdleFunc(spinCube);
+	glutIdleFunc(idle);
 	glutKeyboardFunc(mykey);
 	 glutPassiveMotionFunc (motion);
 	setupMenu();
