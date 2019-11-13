@@ -150,8 +150,8 @@ GLint matrix_loc;
 bool rotate = true;
 bool basecube = true;
 bool testcube = true;
-
 bool game = false;
+
 //pointers for objects to draw
 camera* cam;
 cube* baseCube;
@@ -162,22 +162,7 @@ cube* test4;
 world* w1;
 GLuint program;
 
-int x =0;
-int y =0;
-int z =-1;
-int moveamount = 1;
-  point4 at(0.0, 0.0, 0.0, 1.0);
- // vec4   up(0.0, 1.0, 0.0, 0.0);
-point4 eye(0, 0.0, -1, 1.0);
-// the information for the camer pois
-GLfloat camera_angle=45.0; // Camera's angle of view in degrees
-GLfloat zNear;             // Camera's near clipping plane
-GLfloat zFar;              // Camera's far clipping plane
-GLfloat aspect;            // Window's aspect ratio (updated in reshape)
-GLfloat left;
-GLfloat right;
-GLfloat top;
-GLfloat bottom;
+
 // Model-view and projection matrices uniform location
 GLuint  Modeltrans, Projection, Modelview, coloring; 
 mat4 model_view; //the transfermations per objects based off the position of the player
@@ -195,169 +180,26 @@ int openwalls =0;
 
 
 
-//Everything to do with the camera
-vec3 cameraPos = vec3(0.0f, 0.0f, 3.0f);  
-vec3 cameraTarget = vec3(0.0f, 0.0f, 0.0f);
-vec3 cameraDirection = normalize(cameraPos - cameraTarget);
-vec3 up = vec3(0.0f, 1.0f, 0.0f); 
-vec3 cameraRight = normalize(cross(up, cameraDirection));
-vec3 cameraUp = cross(cameraDirection, cameraRight);
-mat4 view = LookAt(vec3(0.0f, 0.0f, 3.0f),  vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
-vec3 cameraFront = vec3(0.0f, 0.0f, -1.0f);
-float cameraSpeed = 0.1f;
 
 //window vars
 int Wheight =900;
 int Wwidth = 900;
 
-//booleans for movments
-bool mforward = false;
-bool mleft = false;
-bool mright = false;
-bool mbackward = false;
-bool mup = false;
-bool mdown = false;
 
-//vars for the first person 
-//float lastX = 450, lastY = 450;
-bool firstMouse = true;
-float yaw   =  -90.0f;	// yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
-float pitch =  0.0f;
-float lastX =  450.0f;
-float lastY =  450;
-float fov   =  45.0f;
+
+
 
 extern "C" void reshape(int width, int height){
-  glViewport(0, 0, width, height);
-
-	Wheight = width;
-	Wheight = height;
-
-  GLfloat left = -2.0, right = 2.0;
-  GLfloat top = 2.0, bottom = -2.0;
- 
-  // Use following for ortho projection
-  //  GLfloat zNear = -20.0, zFar = 20.0;
-
-  // Use following for perspective projection
-  zNear = 0.2;
-  zFar = 40.0;
-
-  aspect = GLfloat(width)/height;
-
-  if (aspect > 1.0) {
-    left *= aspect;
-    right *= aspect;
-  }
-  else {
-    top /= aspect;
-    bottom /= aspect;
-  }
-
-	mat4 projection = Perspective(camera_angle, aspect, zNear, zFar);
-
-  // Can use either perspective or ortho projection.
-   // mat4 projection = Ortho(left, right, bottom, top, zNear, zFar);
-  glUniformMatrix4fv(Projection, 1, GL_TRUE, projection);
+	cam->reshape( width,  height);
 }
 
 
-void moveCam() {
-	if (mforward) {
-		cameraPos += cameraSpeed * cameraFront;
-		mforward = false;
-	}
-	if (mbackward) {
-		cameraPos -= cameraSpeed * cameraFront;
-		mbackward = false;
-	}
-	if (mleft) {
-		cameraPos -= normalize(cross(cameraFront, cameraUp)) * cameraSpeed;
-		mleft = false;
-	}
-	if (mright) {
-		cameraPos += normalize(cross(cameraFront, cameraUp)) * cameraSpeed;
-		mright = false;
-	}
-	if (mup) {
-		cameraPos.y += cameraSpeed;
-		mup = false;
-	}
-	if (mdown) {
-		cameraPos.y -= cameraSpeed;
-		mdown = false;
-	}
 
-
-	mat4 view = LookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-	glUniformMatrix4fv(Modelview, 1, GL_TRUE, (view));
-}
-
-void Setmforward() {
-	mforward = true;
-}
-void Setmleft() {
-	mleft = true;
-}
-void Setmright() {
-	mright = true;
-}
-void Setmbackward() {
-	mbackward = true;
-}
-void Setmup() {
-	mup = true;
-}
-void Setmdown() {
-	mdown = true;
-}
 
 
 extern "C" void motion(int xpos, int ypos)
 {
- 
-	//std::cout<<"mopuse is moving:"<<xpos<<" "<<ypos<<std::endl;
-	//std::cout<<"check"<<std::endl;
-    if(firstMouse)
-    {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
-  
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; 
-    lastX = xpos;
-    lastY = ypos;
-
-    float sensitivity = 0.05;
-    xoffset *= sensitivity;
-    yoffset *= sensitivity;
-
-    yaw   += xoffset;
-    pitch += yoffset;
-
-    if(pitch > 89.0f)
-        pitch = 89.0f;
-    if(pitch < -89.0f)
-        pitch = -89.0f;
-
-    vec3 front;
-    front.x = cos(DegreesToRadians*yaw) * cos(DegreesToRadians*pitch);
-    front.y = sin(DegreesToRadians*pitch);
-    front.z = sin(DegreesToRadians*yaw) * cos(DegreesToRadians*pitch);
-    cameraFront = normalize(front);
-		//glutWarpPointer(450,450); 
-
-	    if ( xpos < 50 || xpos > Wwidth - 50 ) {  //you can use values other than 100 for the screen edges if you like, kind of seems to depend on your mouse sensitivity for what ends up working best
-        lastX = Wwidth/2;   //centers the last known position, this way there isn't an odd jump with your cam as it resets
-        lastY = Wheight/2;   
-        glutWarpPointer(Wwidth/2, Wheight/2);  //centers the cursor
-    } else if (ypos < 50 || ypos > Wheight - 50) {
-        lastX = Wwidth/2;
-        lastY = Wheight/2;
-        glutWarpPointer(Wwidth/2, Wheight/2);
-    } 
+	cam->motion(xpos, ypos);
 
   glutPostRedisplay();
 }
@@ -393,6 +235,9 @@ void init() {
 	Modeltrans = glGetUniformLocation(program, "model_trans");
   	Projection = glGetUniformLocation(program, "Projection");
 	coloring = glGetUniformLocation(program, "objColor");
+	cam->setModelveiw(Modelview);
+	cam->setProjection(Projection);
+
 	//uncomment this for the wire frame model
 	//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
@@ -414,7 +259,7 @@ extern "C" void display() {
 		}
 
 	}else{
-		w1->updatePlayerpos(cameraPos);
+		//w1->updatePlayerpos(cameraPos);
 		w1->draw();
 	}
 	glutSwapBuffers();
@@ -451,7 +296,7 @@ void idle() {
 
 	  // deal with movement
 
-	moveCam();
+	cam->moveCam();
 
 	// check for collision
 
@@ -480,27 +325,27 @@ extern "C" void mykey(unsigned char key, int mousex, int mousey) {
 		break;
 
 	case 'w':
-		Setmforward();
+		cam->Setmforward();
 		//cameraPos += cameraSpeed * cameraFront;
 		break;
 	case 's':
-		Setmbackward();
+		cam->Setmbackward();
 		//cameraPos -= cameraSpeed * cameraFront;
 		break;
 	case 'a':
-		Setmleft();
+		cam->Setmleft();
 		//cameraPos -= normalize(cross(cameraFront, cameraUp)) * cameraSpeed;
 		break;
 	case 'd':
-		Setmright();
+		cam->Setmright();
 		//cameraPos += normalize(cross(cameraFront, cameraUp)) * cameraSpeed;
 		break;
 	case ' ':
-		Setmup();
+		cam->Setmup();
 		break;
 
 	case 'e':
-		Setmdown();
+		cam->Setmdown();
 		break;
 
 	case 'f':
@@ -600,7 +445,7 @@ void myinit(){
 
 
 int main(int argc, char** argv){
-
+	cam = new camera();
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowSize(900, 900);
