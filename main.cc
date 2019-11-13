@@ -18,6 +18,7 @@
 
 const int NumVertices = 36; //(6 faces)(2 triangles/face)(3 vertices/triangle)
 const int NumOFBlocks = 1;
+
 typedef Angel::vec4  point4;
 typedef Angel::vec4  color4;
 
@@ -138,7 +139,7 @@ namespace Angel {
 // Adjust this value for your taste (to speed up, make bigger, to
 // slow down rotation, make smaller
 GLfloat incr =0.06;
-const static int numOfObjects =3;
+const static int numOfObjects =50;
 int axis = 0;
 float theta[3] = {0.0, 0.0, 0.0};
 
@@ -148,7 +149,7 @@ GLint matrix_loc;
 
 bool rotate = true;
 bool basecube = true;
-bool testcube = false;
+bool testcube = true;
 
 bool game = false;
 //pointers for objects to draw
@@ -156,6 +157,7 @@ camera* cam;
 cube* baseCube;
 cube* outline;
 cube* outline2;
+cube* test4;
 
 world* w1;
 GLuint program;
@@ -177,7 +179,7 @@ GLfloat right;
 GLfloat top;
 GLfloat bottom;
 // Model-view and projection matrices uniform location
-GLuint  Modeltrans, Projection, Modelview; 
+GLuint  Modeltrans, Projection, Modelview, coloring; 
 mat4 model_view; //the transfermations per objects based off the position of the player
 // OpenGL initialization
 
@@ -383,14 +385,14 @@ void init() {
 	glEnableVertexAttribArray(loc);
 	glVertexAttribPointer(loc, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
-	loc2 = glGetAttribLocation(program, "vColor");
-	glEnableVertexAttribArray(loc2);
-	glVertexAttribPointer(loc2, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(baseCube->get_points_size()));
+	//loc2 = glGetAttribLocation(program, "vColor");
+	//glEnableVertexAttribArray(loc2);
+	//glVertexAttribPointer(loc2, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(baseCube->get_points_size()));
 
 	Modelview = glGetUniformLocation(program, "model_view");
 	Modeltrans = glGetUniformLocation(program, "model_trans");
   	Projection = glGetUniformLocation(program, "Projection");
-
+	coloring = glGetUniformLocation(program, "objColor");
 	//uncomment this for the wire frame model
 	//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
@@ -408,6 +410,7 @@ extern "C" void display() {
 		if (testcube) {
 			outline->draw();
 			outline2->draw();
+			test4->draw();
 		}
 
 	}else{
@@ -437,7 +440,7 @@ void idle() {
 	baseCube->updateAngle(theta);
 	outline->updateAngle(theta);
 	outline2->updateAngle(theta);
-
+	test4->updateAngle(theta);
 	if (theta[axis] > 360.0) theta[axis] -= 360.0;
 
 
@@ -562,21 +565,35 @@ void myinit(){
 	baseCube = new cube();
 	baseCube->setindex(0);
 	baseCube->setModelVeiw(Modeltrans);
+	baseCube->setColorloc(coloring);
+	baseCube->setColor(color4(1.0, 0.0, 0.0, 1.0));
 	baseCube->init();
 
 	outline = new cube();
 	outline->setModelVeiw(Modeltrans);
+	outline->setColorloc(coloring);
 	outline->setindex(1);
-	outline->setColor(color4(1.0, 0.0, 0.0, 1.0));
+	outline->setColor(color4(0.0, 1.0, 0.0, 1.0));
 	outline->init();
 	outline->setLoc(vec3(0, 1, 0));
 
 	outline2 = new cube();
 	outline2->setModelVeiw(Modeltrans);
+	outline2->setColorloc(coloring);
 	outline2->setindex(2);
 	outline2->setColor(color4(0.0, 0.0, 1.0, 1.0));
 	outline2->init();
 	outline2->setLoc(vec3(1, 1, 0));
+
+	
+
+	test4 = new cube();
+	test4->setModelVeiw(Modeltrans);
+	test4->setColorloc(coloring);
+	test4->setindex(4);
+	test4->setColor(color4(0.0, 1.0, 1.0, 1.0));
+	test4->init();
+	test4->setLoc(vec3(-1, -1, 0));
 
 	w1 = new world();
 }

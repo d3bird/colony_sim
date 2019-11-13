@@ -35,7 +35,7 @@ public:
 	GLuint get_loc_size() { return sizeof(loc); }
 
 	void setModelVeiw(GLuint i) { trans = i; }
-
+	void setColorloc(GLuint i) { coloring = i; }
 	void setindex(int i) { placeIndex = i; }
 
 	void calTranMat();
@@ -64,7 +64,7 @@ private:
 	point4  vertices2[8];// was 8
 	point4  vertices3[8];
 	color4 material_ambient;
-	color4 material_diffuse;
+	vec4 material_diffuse;
 	color4 material_specular;
 	float material_shininess;
 	point4 light_position;
@@ -78,7 +78,7 @@ private:
 	color4 quad_color[NumVertices];
 
 
-	GLuint  trans;
+	GLuint  trans, coloring;
 
 	vec3 loc;
 
@@ -89,6 +89,7 @@ private:
 	int length;//
 	int height;//
 
+	int amountOfcubes = 3;
 	int placeIndex;
 
 	//rotation transformation 

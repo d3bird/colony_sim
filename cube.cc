@@ -133,6 +133,7 @@ void cube::calTranMat() {
 	ctm = RotateX(theta[0]) * RotateY(theta[1]) * RotateZ(theta[2]);//rotes the cube
 	model_veiw_base = tloc * ctm;
 	glUniformMatrix4fv(trans, 1, GL_TRUE, (model_veiw_base));
+	glUniform4f(coloring, material_diffuse.x, material_diffuse.y, material_diffuse.z, material_diffuse.w);
 }
 
 
@@ -145,11 +146,12 @@ void cube::draw() {
 	calTranMat();
 	//std::cout << temp << std::endl;
 
-	//if (placeIndex == 0) {
+	//	if (placeIndex == 0) {
 	//	glDrawArrays(GL_TRIANGLES, 0, NumVertices); // the top of the table
 	//}
 	//else {
-glDrawArrays(GL_TRIANGLES, NumVertices * placeIndex, NumVertices * (placeIndex + 1)); // the top of the table
+
+glDrawArrays(GL_TRIANGLES, 0, NumVertices); // the top of the table
 	//}
 
 }
@@ -162,13 +164,18 @@ void cube::update(){
 void cube::init() {
 	calTranMat();
 	colorcube();
-	//if (placeIndex == 0) {
-	//	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(points), points);//old way
-	//	glBufferSubData(GL_ARRAY_BUFFER, sizeof(points), sizeof(quad_color), quad_color);
-	//}
-	//else {
-		glBufferSubData(GL_ARRAY_BUFFER, sizeof(points) * placeIndex, sizeof(points), points);
-		glBufferSubData(GL_ARRAY_BUFFER, sizeof(points) * (placeIndex + 1), sizeof(quad_color), quad_color);
-	//}
+	if (placeIndex == 0) {
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(points), points);//old way
+		glBufferSubData(GL_ARRAY_BUFFER, sizeof(points), sizeof(quad_color), quad_color);
+	}
+	else {
+		std::cout << "cube buffer loc" << std::endl;
+		std::cout << "start loc: " << sizeof(points) * placeIndex << " size: " << sizeof(points) << std::endl;
+		//glBufferSubData(GL_ARRAY_BUFFER, (sizeof(points) + sizeof(quad_color) * placeIndex), sizeof(points), points);//old way
+		//glBufferSubData(GL_ARRAY_BUFFER, ((sizeof(points) + sizeof(quad_color)) * placeIndex) , sizeof(quad_color), quad_color);
+		//glBufferSubData(GL_ARRAY_BUFFER, (sizeof(points) * placeIndex), sizeof(points), points);//old way
+		//glBufferSubData(GL_ARRAY_BUFFER, ((sizeof(points) + sizeof(quad_color)) * placeIndex) , sizeof(quad_color), quad_color);
+	}
 	glUniformMatrix4fv(trans, 1, GL_TRUE, (model_veiw_base));
+	glUniformMatrix4fv(coloring, 1, GL_TRUE, (material_diffuse));
 }

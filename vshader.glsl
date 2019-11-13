@@ -1,10 +1,12 @@
 attribute vec4 vPosition;
-attribute vec4 vColor;
+//attribute vec4 vColor;
 varying vec4 color;
 
 uniform mat4 Projection;
 uniform mat4 model_trans;
 uniform mat4 model_view;
+
+uniform vec4 objColor;
 void main() 
 {
 
@@ -20,5 +22,5 @@ vec4 temp;
   gl_Position =Projection* model_view * model_trans * ((temp ));
 
 
-  color = vColor;
+  color = objColor;
 } 
