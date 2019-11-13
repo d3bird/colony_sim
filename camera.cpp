@@ -5,6 +5,44 @@ typedef Angel::vec4  color4;
 
 camera::camera() {
 
+	//booleans for movments
+	mforward = false;
+	mleft = false;
+	mright = false;
+	mbackward = false;
+	mup = false;
+	mdown = false;
+
+	//Everything to do with the camera
+	cameraPos = vec3(0.0f, 0.0f, 3.0f);
+	cameraTarget = vec3(0.0f, 0.0f, 0.0f);
+	cameraDirection = normalize(cameraPos - cameraTarget);
+	up = vec3(0.0f, 1.0f, 0.0f);
+	cameraRight = normalize(cross(up, cameraDirection));
+	cameraUp = cross(cameraDirection, cameraRight);
+	view = LookAt(vec3(0.0f, 0.0f, 3.0f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+	cameraFront = vec3(0.0f, 0.0f, -1.0f);
+	cameraSpeed = 0.1f;
+
+	//window vars
+	Wheight = 900;
+	Wwidth = 900;
+
+
+	//vars for the first person 
+	firstMouse = true;
+	yaw = -90.0f;	// yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
+	pitch = 0.0f;
+	lastX = 450.0f;
+	lastY = 450;
+	fov = 45.0f;
+
+	x = 0;
+	y = 0;
+	z = -1;
+	moveamount = 1;
+	// the information for the camer pos
+	camera_angle = 45.0; // Camera's angle of view in degrees
 
 }
 

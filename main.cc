@@ -133,9 +133,6 @@ namespace Angel {
 }  // Close namespace Angel block
 
 
-
-
-
 // Adjust this value for your taste (to speed up, make bigger, to
 // slow down rotation, make smaller
 GLfloat incr =0.06;
@@ -168,17 +165,10 @@ GLuint  Modeltrans, Projection, Modelview, coloring;
 mat4 model_view; //the transfermations per objects based off the position of the player
 // OpenGL initialization
 
-
-
 //bools for interaction
 bool interact = false;
 
 bool inroom1 = true;
-
-int openwalls =0;
-
-
-
 
 
 //window vars
@@ -186,16 +176,9 @@ int Wheight =900;
 int Wwidth = 900;
 
 
-
-
-
 extern "C" void reshape(int width, int height){
 	cam->reshape( width,  height);
 }
-
-
-
-
 
 extern "C" void motion(int xpos, int ypos)
 {
@@ -203,8 +186,6 @@ extern "C" void motion(int xpos, int ypos)
 
   glutPostRedisplay();
 }
-
-//the rest of the program
 
 
 void init() {
