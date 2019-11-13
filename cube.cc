@@ -21,6 +21,8 @@ cube::cube() {
 	viewer = vec4(0.0, 0.0, -1.0, 0.0);
 	spec = true;
 
+	outline = color4(0.0, 0.0, 0.0, 1.0);
+
 	scale = 0;
 	//for the base of the table
 	width = 135;//315
@@ -139,20 +141,13 @@ void cube::calTranMat() {
 
 
 void cube::draw() {
-	//ctm = RotateX(theta[0]) * RotateY(theta[1]) * RotateZ(theta[2]);//rotes the cube
-	//calTranMat();
-	//colorcube();
-
 	calTranMat();
-	//std::cout << temp << std::endl;
 
-	//	if (placeIndex == 0) {
-	//	glDrawArrays(GL_TRIANGLES, 0, NumVertices); // the top of the table
-	//}
-	//else {
-
-glDrawArrays(GL_TRIANGLES, 0, NumVertices); // the top of the table
-	//}
+	glDrawArrays(GL_TRIANGLES, 0, NumVertices); // the top of the table
+	glUniform4f(coloring, outline.x, outline.y, outline.z, outline.w);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 }
 

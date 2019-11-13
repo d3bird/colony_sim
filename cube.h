@@ -74,6 +74,8 @@ private:
 
 	float theta[3];
 
+	color4 outline;
+
 	point4 points[NumVertices];
 	color4 quad_color[NumVertices];
 
