@@ -15,7 +15,7 @@ public:
 	void reshape(int width, int height);
 	void motion(int xpos, int ypos);
 
-	//set the 
+	//set the locations for the shader vars
 	void setProjection(GLuint i) { Projection = i; }
 	void setModelveiw(GLuint i) { Modelview = i; }
 
