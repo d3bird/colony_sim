@@ -147,7 +147,7 @@ GLint matrix_loc;
 bool rotate = true;
 bool basecube = true;
 bool testcube = true;
-bool game = false;
+bool game = true;
 
 //pointers for objects to draw
 camera* cam;
@@ -402,17 +402,17 @@ void myinit(){
 	outline->setColorloc(coloring);
 	outline->setindex(1);
 	outline->setColor(color4(0.0, 1.0, 0.0, 1.0));
-	outline->init();
 	outline->setLoc(vec3(0, 1, 0));
+	outline->init();
+	
 
 	outline2 = new cube();
 	outline2->setModelVeiw(Modeltrans);
 	outline2->setColorloc(coloring);
 	outline2->setindex(2);
 	outline2->setColor(color4(0.0, 0.0, 1.0, 1.0));
-	outline2->init();
 	outline2->setLoc(vec3(0, 2, 0));
-
+	outline2->init();
 	
 
 	test4 = new cube();
@@ -420,10 +420,14 @@ void myinit(){
 	test4->setColorloc(coloring);
 	test4->setindex(4);
 	test4->setColor(color4(0.0, 1.0, 1.0, 1.0));
-	test4->init();
 	test4->setLoc(vec3(-1, -1, 0));
+	test4->init();
 
+	
 	w1 = new world();
+	w1->setModelVeiw(Modeltrans);
+	w1->setColorloc(coloring);
+	w1->init();
 }
 
 

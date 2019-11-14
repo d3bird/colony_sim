@@ -148,6 +148,8 @@ void cube::draw() {
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices); // the top of the table
 	glUniform4f(coloring, outline.x, outline.y, outline.z, outline.w);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	model_veiw_base = tloc * ctm * Scale(1.0001, 1.0001, 1.0001);
+	glUniformMatrix4fv(trans, 1, GL_TRUE, (model_veiw_base));
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
