@@ -137,7 +137,7 @@ namespace Angel {
 // slow down rotation, make smaller
 GLfloat incr =0.06;
 const static int numOfObjects =50;
-int axis = 0;
+int axis = 1;
 float theta[3] = {0.0, 0.0, 0.0};
 
 GLuint buffers[2];
@@ -260,13 +260,14 @@ void idle() {
 	static GLint time = glutGet(GLUT_ELAPSED_TIME);
 	GLint deltatime = (glutGet(GLUT_ELAPSED_TIME) - time);
 
+	if (rotate) {
+		theta[axis] += incr * (deltatime);
 
-	theta[axis] += incr * (deltatime);
-
-	baseCube->updateAngle(theta);
-	outline->updateAngle(theta);
-	outline2->updateAngle(theta);
-	test4->updateAngle(theta);
+		baseCube->updateAngle(theta);
+		outline->updateAngle(theta);
+		outline2->updateAngle(theta);
+		test4->updateAngle(theta);
+	}
 	if (theta[axis] > 360.0) theta[axis] -= 360.0;
 
 
@@ -332,6 +333,7 @@ extern "C" void mykey(unsigned char key, int mousex, int mousey) {
 	case 'f':
 		interact = true;
 		break;
+
 
 	case '1':
 		basecube = !basecube;
@@ -409,7 +411,7 @@ void myinit(){
 	outline2->setindex(2);
 	outline2->setColor(color4(0.0, 0.0, 1.0, 1.0));
 	outline2->init();
-	outline2->setLoc(vec3(1, 1, 0));
+	outline2->setLoc(vec3(0, 2, 0));
 
 	
 

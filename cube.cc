@@ -55,9 +55,11 @@ cube::cube() {
 	//init();
 }
 
+
+//this function converts the grid coridants to draw positions on the screen
 void cube::setLoc(vec3 i){
 	loc = i;
-	tloc = Translate(loc.x, loc.y, loc.z);
+	tloc = Translate(loc.x * gridOfset, loc.y * gridOfset, loc.z * gridOfset);
 }
 
 
@@ -164,8 +166,8 @@ void cube::init() {
 		glBufferSubData(GL_ARRAY_BUFFER, sizeof(points), sizeof(quad_color), quad_color);
 	}
 	else {
-		std::cout << "cube buffer loc" << std::endl;
-		std::cout << "start loc: " << sizeof(points) * placeIndex << " size: " << sizeof(points) << std::endl;
+		//std::cout << "cube buffer loc" << std::endl;
+		//std::cout << "start loc: " << sizeof(points) * placeIndex << " size: " << sizeof(points) << std::endl;
 		//glBufferSubData(GL_ARRAY_BUFFER, (sizeof(points) + sizeof(quad_color) * placeIndex), sizeof(points), points);//old way
 		//glBufferSubData(GL_ARRAY_BUFFER, ((sizeof(points) + sizeof(quad_color)) * placeIndex) , sizeof(quad_color), quad_color);
 		//glBufferSubData(GL_ARRAY_BUFFER, (sizeof(points) * placeIndex), sizeof(points), points);//old way
