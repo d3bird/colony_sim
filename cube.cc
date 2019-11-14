@@ -22,7 +22,7 @@ cube::cube() {
 	spec = true;
 
 	outline = color4(0.0, 0.0, 0.0, 1.0);
-
+	hidden = color4(0.67, 0.70, 0.75, 1.0);
 	scale = 0;
 	//for the base of the table
 	width = 135;//315
@@ -46,7 +46,7 @@ cube::cube() {
 	vertices[6] = point4(width, (height), -length, 1.0);
 	vertices[7] = point4(width, -(height), -length, 1.0);
 
-	
+	vissible = false;
 
 	tloc = Translate(loc.x, loc.y, loc.z);// the location of the table
 
@@ -142,17 +142,20 @@ void cube::calTranMat() {
 
 
 
-void cube::draw() {
+void cube::draw(bool i) {
 	calTranMat();
-
+	if (!vissible) {
+		glUniform4f(coloring, hidden.x, hidden.y, hidden.z, hidden.w);
+	}
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices); // the top of the table
-	glUniform4f(coloring, outline.x, outline.y, outline.z, outline.w);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	model_veiw_base = tloc * ctm * Scale(1.0001, 1.0001, 1.0001);
-	glUniformMatrix4fv(trans, 1, GL_TRUE, (model_veiw_base));
-	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
+	if (i) {
+		glUniform4f(coloring, outline.x, outline.y, outline.z, outline.w);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		model_veiw_base = tloc * ctm * Scale(1.0001, 1.0001, 1.0001);
+		glUniformMatrix4fv(trans, 1, GL_TRUE, (model_veiw_base));
+		glDrawArrays(GL_TRIANGLES, 0, NumVertices);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
 }
 
 void cube::update(){

@@ -3,10 +3,15 @@
 
 world::world() {
 
-	height = 2;
-	ywidth = 10;
-	xwidth = 10;
+	height = 14;
+	ywidth = 20;
+	xwidth = 20;
 
+
+	 drawdistance = 5;
+	 startLayer = 0;
+	 gridlines = false;
+	 drawhidden = false;
 
 	map = new cube ** [height];
 
@@ -51,20 +56,43 @@ void world::init() {
 					map[f][y][x].setColor(color4(0.0, 1.0, 0.0, 1.0));
 				}
 				map[f][y][x].setLoc(vec3(x, -f, y));
+
+				if ((x == xwidth - 1 || x == 0) || (y == ywidth - 1 || y == 0) || (f == height - 1 || f == 0)) {
+					map[f][y][x].setvissible(true);
+				}
 			}
 		}
 	}
 
 }
 
+void world::increaseLayer() {
+	startLayer++;
+	if (startLayer < 0) {
+		startLayer = 0;
+	}
+}
+
+void world::decreaseLayer() {
+	startLayer--;
+	if (startLayer < 0) {
+		startLayer = 0;
+	}
+}
 
 void world::draw(){
+	//std::cout << "drawling world" << std::endl;
 
-	for (int f = 0; f < height; f++) {
+	int drawlength = startLayer + drawdistance;
+	if (drawlength > height) {
+		drawlength = height;
+	}
+	for (int f = startLayer; f < drawlength; f++) {
 		for (int y = 0; y < ywidth; y++) {
 			for (int x = 0; x < xwidth; x++) {
-				map[f][y][x].draw();
-
+				if (map[f][y][x].isvissible()|| (drawhidden && f == startLayer)) {
+					map[f][y][x].draw(gridlines);
+				}
 			}
 		}
 	}

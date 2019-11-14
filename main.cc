@@ -15,6 +15,8 @@
 #include "cube.h"
 #include "world.h"
 #include "camera.h"
+#include "output.h"
+#include <iostream>
 
 const int NumVertices = 36; //(6 faces)(2 triangles/face)(3 vertices/triangle)
 const int NumOFBlocks = 1;
@@ -152,6 +154,7 @@ bool game = true;
 //pointers for objects to draw
 camera* cam;
 cube* baseCube;
+
 cube* outline;
 cube* outline2;
 cube* test4;
@@ -230,13 +233,13 @@ extern "C" void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // clear the window
 	if (!game){
 		if (basecube) {
-			baseCube->draw();
+			baseCube->draw(true);
 			
 		}
 		if (testcube) {
-			outline->draw();
-			outline2->draw();
-			test4->draw();
+			outline->draw(true);
+			outline2->draw(true);
+			test4->draw(true);
 		}
 
 	}else{
@@ -343,7 +346,21 @@ extern "C" void mykey(unsigned char key, int mousex, int mousey) {
 		testcube = !testcube;
 		break;
 
+	case 'H':
+	case 'h':
+		w1->setDrawHidden(!w1->drawlinghidden());
+		break;
+	case 'G':
+	case 'g':
+		w1->setGridLines(!w1->drawlingGrids());
+		break;
+	case '<':
+		w1->decreaseLayer();
+		break;
 
+	case '>':
+		w1->increaseLayer();
+		break;
 	default:
 		// glutSetWindowTitle(key);
 		break;
@@ -390,6 +407,7 @@ void setupMenu() {
 }
 
 void myinit(){
+	std::cout << "screating objects" << std::endl;
 	baseCube = new cube();
 	baseCube->setindex(0);
 	baseCube->setModelVeiw(Modeltrans);
@@ -428,6 +446,7 @@ void myinit(){
 	w1->setModelVeiw(Modeltrans);
 	w1->setColorloc(coloring);
 	w1->init();
+	std::cout << "done creating objects" << std::endl;
 }
 
 

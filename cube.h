@@ -23,7 +23,7 @@ public:
 	cube();
 
 	void init();
-	void draw();
+	void draw(bool i);
 
 	void update();
 	void colorcube();
@@ -50,9 +50,12 @@ public:
 	void updateLightPos(point4 i){light_position = i;}
 	bool isspecial(){return special;}
 	void setspecial(bool i){special =i;}
-
+	bool isvissible() { return vissible; }
+	void setvissible(bool i) { vissible = i; }
 	
 private:
+
+	bool vissible;
 
 	vec4 product(vec4 a, vec4 b) {
 		return vec4(a[0] * b[0], a[1] * b[1], a[2] * b[2], a[3] * b[3]);
@@ -77,6 +80,7 @@ private:
 	float theta[3];
 
 	color4 outline;
+	color4 hidden;
 
 	point4 points[NumVertices];
 	color4 quad_color[NumVertices];

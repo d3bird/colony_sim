@@ -32,18 +32,32 @@ public:
     void update();
 
 	void init();
+	
+	void increaseLayer();
+	void decreaseLayer();
 
 	void setModelVeiw(GLuint i) { trans = i; }
 	void setColorloc(GLuint i) { coloring = i; }
+	
+	void setGridLines(bool i) { gridlines = i; }
+	bool drawlingGrids() { return gridlines; }
+
+	void setDrawHidden(bool i) { drawhidden = i; }
+	bool drawlinghidden() { return drawhidden; }
 
 private:
 
-	int height;
-	int ywidth;
-	int xwidth;
+	int height;//the total height of the world
+	int ywidth;// the total width of the world
+	int xwidth;// the total length of the world
+
+	int drawdistance;
+	int startLayer;
 
 	int overworld_height;
 
+	bool gridlines;
+	bool drawhidden;
 	cube*** map;
 
 	GLuint trans, coloring;
