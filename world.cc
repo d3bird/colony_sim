@@ -50,10 +50,11 @@ void world::init() {
 				map[f][y][x].setModelVeiw(trans);
 				map[f][y][x].setColorloc(coloring);
 				if (f != 0) {
-					map[f][y][x].setColor(color4(1.0, 0.0, 0.0, 1.0));
+					map[f][y][x].setColor(color4(0.522, 0.353, 0.251, 1.0));
 				}
 				else {
-					map[f][y][x].setColor(color4(0.0, 1.0, 0.0, 1.0));
+					//map[f][y][x].setColor(color4(0.486, 0.988, 0.0, 1.0));// grass green
+					map[f][y][x].setColor(color4(0.196, 0.804, 0.196, 1.0));//dark lime green
 				}
 				map[f][y][x].setLoc(vec3(x, -f, y));
 
@@ -98,7 +99,7 @@ void world::draw(){
 			}
 		}
 	}
-	trees->draw(true);
+	trees->draw(gridlines);
 }
 
 void world::update(){

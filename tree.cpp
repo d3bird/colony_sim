@@ -1,7 +1,7 @@
 #include "tree.h"
 
 tree::tree(GLuint t, GLuint c) {
-	ncubes = 13;
+	ncubes = 14;
 	blocks = new cube[ncubes];
 	leaves = color4(0.0, 1.0, 0.0, 1.0);
 	bark = color4(0.0, 0.0, 1.0, 1.0);
@@ -30,8 +30,8 @@ tree::~tree() {
 }
 
 void tree::draw(bool i) {
-	for (int i = 0; i < ncubes; i++) {
-		blocks[i].draw(true);
+	for (int q = 0; q < ncubes; q++) {
+		blocks[q].draw(i);
 	}
 
 }
@@ -45,11 +45,11 @@ void tree::init() {
 			blocks[i].setColorloc(coloring);
 			blocks[i].setindex(1);
 			blocks[i].setvissible(true);
-			if (i == 4) {
-				blocks[i].setColor(color4(0.0, 1.0, 0.0, 1.0));
+			if (i >= 4) {
+				blocks[i].setColor(color4(0.3216, 0.4196, 0.1765, 1.0));
 			}
 			else {
-				blocks[i].setColor(color4(0.0, 0.0, 1.0, 1.0));
+				blocks[i].setColor(color4(0.549, 0.3843, 0.3451, 1.0));
 			}
 			blocks[i].setLoc(vec3(x, y + 1 + i, z));
 			blocks[i].init();
@@ -63,16 +63,17 @@ void tree::init() {
 		blocks[10].setLoc(vec3(x+1, y + 4, z));
 		blocks[11].setLoc(vec3(x-1, y + 4, z));
 		blocks[12].setLoc(vec3(x, y + 4, z+1));
+		//blocks[13].setLoc(vec3(x, y + 4, z - 1));
 
-		blocks[5].setColor(color4(0.0, 1.0, 0.0, 1.0));
+		/*blocks[5].setColor(color4(0.0, 1.0, 0.0, 1.0));
 		blocks[6].setColor(color4(0.0, 1.0, 0.0, 1.0));
 		blocks[7].setColor(color4(0.0, 1.0, 0.0, 1.0));
 		blocks[8].setColor(color4(0.0, 1.0, 0.0, 1.0));
 		blocks[9].setColor(color4(0.0, 1.0, 0.0, 1.0));
 		blocks[10].setColor(color4(0.0, 1.0, 0.0, 1.0));
 		blocks[11].setColor(color4(0.0, 1.0, 0.0, 1.0));
-		blocks[12].setColor(color4(0.0, 1.0, 0.0, 1.0));
-
+		blocks[12].setColor(color4(0.0, 1.0, 0.0, 1.0));*/
+		//blocks[13].setColor(color4(0.0, 1.0, 0.0, 1.0));
 	}
 
 }

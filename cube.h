@@ -34,7 +34,7 @@ public:
 	GLuint get_points_size() { return sizeof(points); }
 	GLuint get_loc_size() { return sizeof(loc); }
 
-	void setModelVeiw(GLuint i) { trans = i; }
+	void setModelVeiw(GLuint i) { trans = i;  }
 	void setColorloc(GLuint i) { coloring = i; }
 	void setindex(int i) { placeIndex = i; }
 
