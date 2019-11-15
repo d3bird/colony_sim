@@ -176,8 +176,8 @@ bool camera::processControllerInput() {
 void camera::motion(int xpos, int ypos)
 {
 
-	std::cout<<"mopuse is moving:"<<xpos<<" "<<ypos<<std::endl;
-	std::cout<<"check"<<std::endl;
+	//std::cout<<"mopuse is moving:"<<xpos<<" "<<ypos<<std::endl;
+	//std::cout<<"check"<<std::endl;
 	if (firstMouse)
 	{
 		lastX = xpos;
