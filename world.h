@@ -18,6 +18,7 @@
 #include <iostream>
 #include "cube.h"
 #include "tree.h"
+#include <vector>
 
 typedef Angel::vec4  point4;
 typedef Angel::vec4  color4;
@@ -60,6 +61,7 @@ private:
 	bool drawhidden;
 	cube*** map;
 	tree* trees;
+	std::vector<tree*>* treeList;// the trees are based on layers on wich they are grown
 	GLuint trans, coloring;
 
 };

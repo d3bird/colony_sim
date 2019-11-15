@@ -1,7 +1,7 @@
 #include "tree.h"
 
 tree::tree(GLuint t, GLuint c) {
-	ncubes = 14;
+	ncubes = 13;
 	blocks = new cube[ncubes];
 	leaves = color4(0.0, 1.0, 0.0, 1.0);
 	bark = color4(0.0, 0.0, 1.0, 1.0);
@@ -59,20 +59,21 @@ void tree::init() {
 		blocks[6].setLoc(vec3(x-1, y + 3, z));
 		blocks[7].setLoc(vec3(x, y + 3, z+1));
 		blocks[8].setLoc(vec3(x, y + 3, z-1));
-		blocks[9].setLoc(vec3(x, y + 4, z));
-		blocks[10].setLoc(vec3(x+1, y + 4, z));
-		blocks[11].setLoc(vec3(x-1, y + 4, z));
-		blocks[12].setLoc(vec3(x, y + 4, z+1));
+		blocks[9].setLoc(vec3(x+1, y + 4, z));
+		blocks[10].setLoc(vec3(x-1, y + 4, z));
+		blocks[11].setLoc(vec3(x, y + 4, z+1));
+		blocks[12].setLoc(vec3(x, y + 4, z-1));
 		//blocks[13].setLoc(vec3(x, y + 4, z - 1));
 
+		//for debugging purposes only to see where the leaves are forming
 		/*blocks[5].setColor(color4(0.0, 1.0, 0.0, 1.0));
 		blocks[6].setColor(color4(0.0, 1.0, 0.0, 1.0));
-		blocks[7].setColor(color4(0.0, 1.0, 0.0, 1.0));
-		blocks[8].setColor(color4(0.0, 1.0, 0.0, 1.0));
-		blocks[9].setColor(color4(0.0, 1.0, 0.0, 1.0));
-		blocks[10].setColor(color4(0.0, 1.0, 0.0, 1.0));
-		blocks[11].setColor(color4(0.0, 1.0, 0.0, 1.0));
-		blocks[12].setColor(color4(0.0, 1.0, 0.0, 1.0));*/
+		blocks[7].setColor(color4(1.0, 0.0, 0.0, 1.0));
+		blocks[8].setColor(color4(1.0, 0.0, 0.0, 1.0));
+		blocks[9].setColor(color4(0.0, 0.0, 1.0, 1.0));
+		blocks[10].setColor(color4(0.0, 0.0, 1.0, 1.0));
+		blocks[11].setColor(color4(1.0, 1.0, 0.0, 1.0));
+		blocks[12].setColor(color4(1.0, 1.0, 0.0, 1.0));*/
 		//blocks[13].setColor(color4(0.0, 1.0, 0.0, 1.0));
 	}
 

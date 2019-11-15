@@ -24,7 +24,10 @@ world::world() {
 		}
 
 	}
-	trees = new tree;
+	trees = new tree();
+	treeList = new std::vector<tree*>[height];
+
+
 }
 
 
@@ -64,9 +67,32 @@ void world::init() {
 			}
 		}
 	}
+
+	//examples for rendering multiple trees at any location
+	vec3 loc = vec3(5, 0, 1);
 	trees->setColorloc(coloring);
 	trees->setModelVeiw(trans);
+	trees->setLoc(loc);
 	trees->init();
+	int temp = loc.y;
+	if (temp < 0) {
+		temp = temp * -1;
+	}
+	treeList[temp].push_back(trees);
+
+
+	trees = new tree();
+	loc = vec3(15, 0, 8);
+	trees->setColorloc(coloring);
+	trees->setModelVeiw(trans);
+	trees->setLoc(loc);
+	trees->init();
+	 temp = loc.y;
+	 if (temp < 0) {
+		 temp = temp * -1;
+	 }
+	treeList[temp].push_back(trees);
+
 }
 
 void world::increaseLayer() {
@@ -95,11 +121,20 @@ void world::draw(){
 			for (int x = 0; x < xwidth; x++) {
 				if (map[f][y][x].isvissible()|| (drawhidden && f == startLayer)) {
 					map[f][y][x].draw(gridlines);
+					
 				}
 			}
 		}
+		if (treeList[f].size() != 0 && f == startLayer) {
+			for (int i = 0; i < treeList[f].size(); i++) {
+				treeList[f][i]->draw(gridlines);
+			}
+		}
 	}
-	trees->draw(gridlines);
+
+
+
+	//trees->draw(gridlines);
 }
 
 void world::update(){
