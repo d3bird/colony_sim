@@ -17,7 +17,7 @@
 #include <vector>
 #include <iostream>
 #include "cube.h"
-
+#include "tree.h"
 
 typedef Angel::vec4  point4;
 typedef Angel::vec4  color4;
@@ -36,8 +36,8 @@ public:
 	void increaseLayer();
 	void decreaseLayer();
 
-	void setModelVeiw(GLuint i) { trans = i; }
-	void setColorloc(GLuint i) { coloring = i; }
+	void setModelVeiw(GLuint i) { trans = i; trees->setModelVeiw(trans); }
+	void setColorloc(GLuint i) { coloring = i; trees->setColorloc(trans); }
 	
 	void setGridLines(bool i) { gridlines = i; }
 	bool drawlingGrids() { return gridlines; }
@@ -59,7 +59,7 @@ private:
 	bool gridlines;
 	bool drawhidden;
 	cube*** map;
-
+	tree* trees;
 	GLuint trans, coloring;
 
 };

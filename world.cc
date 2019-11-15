@@ -24,7 +24,7 @@ world::world() {
 		}
 
 	}
-
+	trees = new tree;
 }
 
 
@@ -63,7 +63,9 @@ void world::init() {
 			}
 		}
 	}
-
+	trees->setColorloc(coloring);
+	trees->setModelVeiw(trans);
+	trees->init();
 }
 
 void world::increaseLayer() {
@@ -96,7 +98,7 @@ void world::draw(){
 			}
 		}
 	}
-
+	trees->draw(true);
 }
 
 void world::update(){
