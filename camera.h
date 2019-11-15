@@ -1,6 +1,8 @@
 #pragma once
+#pragma comment(lib, "XInput.lib")
 #include "Angel.h"
-
+#include <windows.h>
+#include <Xinput.h>
 typedef Angel::vec4  point4;
 typedef Angel::vec4  color4;
 
@@ -10,6 +12,10 @@ public:
 	camera();
 
 	void moveCam();
+
+	bool connectControllerConected();
+
+	bool processControllerInput();
 
 	//the functions that are called when the mouse moves and window size changes
 	void reshape(int width, int height);
@@ -80,5 +86,9 @@ private:
 
 	GLuint Projection;
 	GLuint Modelview;
+
+	bool invert_con_look;
+
+	int controlerSensitivityL;
 };
 

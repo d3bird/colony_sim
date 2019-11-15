@@ -150,6 +150,7 @@ bool rotate = true;
 bool basecube = true;
 bool testcube = true;
 bool game = true;
+bool controler = false;
 
 //pointers for objects to draw
 camera* cam;
@@ -260,6 +261,7 @@ extern "C" void mouse(int btn, int state, int xpos, int ypos) {
 
 void idle() {
 
+
 	static GLint time = glutGet(GLUT_ELAPSED_TIME);
 	GLint deltatime = (glutGet(GLUT_ELAPSED_TIME) - time);
 
@@ -279,18 +281,16 @@ void idle() {
 
 
 
-	  // deal with movement
-
-	cam->moveCam();
-
-	// check for collision
-
-
-	if (interact) {
-
-
-
+	// deal with movement
+	controler = true;
+	if (controler) {
+		controler = cam->processControllerInput();
 	}
+	else {
+		controler = cam->connectControllerConected();
+	}
+	// check for collision
+	cam->moveCam();
 
 
 

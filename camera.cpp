@@ -1,8 +1,10 @@
 #include "camera.h"
+#include <Xinput.h>
+
 
 typedef Angel::vec4  point4;
 typedef Angel::vec4  color4;
-
+using namespace std;
 camera::camera() {
 
 	//booleans for movments
@@ -14,8 +16,8 @@ camera::camera() {
 	mdown = false;
 
 	//Everything to do with the camera
-	cameraPos = vec3(0.0f, 0.0f, 3.0f);
-	cameraTarget = vec3(0.0f, 0.0f, 0.0f);
+	cameraPos = vec3(0.0f, 2.0f, 3.0f);
+	cameraTarget = vec3(-1.0f, 2.0f, -1.0f);
 	cameraDirection = normalize(cameraPos - cameraTarget);
 	up = vec3(0.0f, 1.0f, 0.0f);
 	cameraRight = normalize(cross(up, cameraDirection));
@@ -44,12 +46,138 @@ camera::camera() {
 	// the information for the camer pos
 	camera_angle = 45.0; // Camera's angle of view in degrees
 
+	controlerSensitivityL = 10;
+	invert_con_look = false;
+}
+
+bool camera::connectControllerConected() {
+	int temp;
+	XINPUT_STATE state;
+	DWORD dwResult;
+	for (DWORD i = 0; i < XUSER_MAX_COUNT; i++)	{
+		ZeroMemory(&state, sizeof(XINPUT_STATE));
+
+		// Simply get the state of the controller from XInput.
+		dwResult = XInputGetState(i, &state);
+
+		if (dwResult == ERROR_SUCCESS)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+}
+
+bool camera::processControllerInput() {
+	XINPUT_STATE state;
+	DWORD dwResult;
+	for (DWORD i = 0; i < XUSER_MAX_COUNT; i++) {
+		ZeroMemory(&state, sizeof(XINPUT_STATE));
+
+		// Simply get the state of the controller from XInput.
+		dwResult = XInputGetState(i, &state);
+
+		if (dwResult == ERROR_SUCCESS) {
+			float normLX = fmaxf(-1, (float)state.Gamepad.sThumbLX / 32767);
+			float normLY = fmaxf(-1, (float)state.Gamepad.sThumbLY / 32767);
+
+			float normRX = fmaxf(-1, (float)state.Gamepad.sThumbRX / 32767);
+			float normRY = fmaxf(-1, (float)state.Gamepad.sThumbRY / 32767);
+
+			int buttons = state.Gamepad.wButtons;
+			//std::cout << normRX << std::endl;
+
+			if (normLX >= 0.25) {
+				Setmright();
+			}
+			else if (normLX <= -0.25) {
+				Setmleft();
+			}
+
+			if (normLY >= 0.25) {
+				Setmforward();
+			}
+			else if (normLY <= -0.25) {
+				Setmbackward();
+			}
+
+			if (buttons == XINPUT_GAMEPAD_A) {
+				Setmup();
+			}
+			else if (buttons == XINPUT_GAMEPAD_B) {
+				Setmdown();
+			}
+
+			bool updatelook = false;
+			int xpos = lastX;// +(controlerSensitivityL * normRX);
+			int ypos = lastY;// +(controlerSensitivityL * normLX);
+
+			if (normRX >= 0.25 || normRX <= -0.25) {
+				xpos += (controlerSensitivityL * normRX);
+				updatelook = true;
+			}
+			if (normRY >= 0.25 || normRY <= -0.25) {
+				if (invert_con_look) {
+					ypos += (controlerSensitivityL * normRY);
+				}
+				else {
+					ypos -= (controlerSensitivityL * normRY);
+				}
+				updatelook = true;
+			}
+
+			if (updatelook){
+				
+				if (firstMouse)
+				{
+					lastX = xpos;
+					lastY = ypos;
+					firstMouse = false;
+				}
+
+				float xoffset = xpos - lastX;
+				float yoffset = lastY - ypos;
+				lastX = xpos;
+				lastY = ypos;
+
+				float sensitivity = 0.05;
+				xoffset *= sensitivity;
+				yoffset *= sensitivity;
+
+				yaw += xoffset;
+				pitch += yoffset;
+
+				if (pitch > 89.0f)
+					pitch = 89.0f;
+				if (pitch < -89.0f)
+					pitch = -89.0f;
+
+				vec3 front;
+				front.x = cos(DegreesToRadians * yaw) * cos(DegreesToRadians * pitch);
+				front.y = sin(DegreesToRadians * pitch);
+				front.z = sin(DegreesToRadians * yaw) * cos(DegreesToRadians * pitch);
+				cameraFront = normalize(front);
+			}
+
+
+			return true;
+		}
+		else{
+			std::cout << "controller not connected" << std::endl;
+			return false;
+		}
+	}
+
 }
 
 void camera::motion(int xpos, int ypos)
 {
-	//std::cout<<"mopuse is moving:"<<xpos<<" "<<ypos<<std::endl;
-	//std::cout<<"check"<<std::endl;
+
+	std::cout<<"mopuse is moving:"<<xpos<<" "<<ypos<<std::endl;
+	std::cout<<"check"<<std::endl;
 	if (firstMouse)
 	{
 		lastX = xpos;
