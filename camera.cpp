@@ -48,6 +48,7 @@ camera::camera() {
 
 	controlerSensitivityL = 10;
 	invert_con_look = false;
+	grids = false;
 }
 
 bool camera::connectControllerConected() {
@@ -111,6 +112,10 @@ bool camera::processControllerInput() {
 				Setmdown();
 			}
 
+			if (buttons == XINPUT_GAMEPAD_X) {
+				grids = !grids;
+			}
+
 			bool updatelook = false;
 			int xpos = lastX;// +(controlerSensitivityL * normRX);
 			int ypos = lastY;// +(controlerSensitivityL * normLX);
@@ -129,8 +134,8 @@ bool camera::processControllerInput() {
 				updatelook = true;
 			}
 
-			if (updatelook){
-				
+			if (updatelook) {
+
 				if (firstMouse)
 				{
 					lastX = xpos;
@@ -165,7 +170,7 @@ bool camera::processControllerInput() {
 
 			return true;
 		}
-		else{
+		else {
 			std::cout << "controller not connected" << std::endl;
 			return false;
 		}

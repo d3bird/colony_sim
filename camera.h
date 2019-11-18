@@ -33,7 +33,12 @@ public:
 	void Setmup() { mup = true; }
 	void Setmdown() { mdown = true; }
 
+	bool getGrids() { return grids; }
+
 private:
+
+	//misc
+	bool grids;
 
 	//booleans for movments
 	bool mforward;
