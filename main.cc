@@ -16,6 +16,7 @@
 #include "world.h"
 #include "camera.h"
 #include "output.h"
+#include "hud.h"
 #include <iostream>
 
 const int NumVertices = 36; //(6 faces)(2 triangles/face)(3 vertices/triangle)
@@ -151,21 +152,18 @@ bool basecube = true;
 bool testcube = true;
 bool game = true;
 bool controler = false;
-
+bool drawHud = false;
 //pointers for objects to draw
 camera* cam;
 cube* baseCube;
-
-cube* outline;
-cube* outline2;
-cube* test4;
+hud* info;
 
 world* w1;
 GLuint program;
 
 
 // Model-view and projection matrices uniform location
-GLuint  Modeltrans, Projection, Modelview, coloring; 
+GLuint  Modeltrans, Projection, Modelview, coloring, simple; 
 mat4 model_view; //the transfermations per objects based off the position of the player
 // OpenGL initialization
 
@@ -187,8 +185,7 @@ extern "C" void reshape(int width, int height){
 extern "C" void motion(int xpos, int ypos)
 {
 	cam->motion(xpos, ypos);
-
-  glutPostRedisplay();
+	glutPostRedisplay();
 }
 
 
@@ -203,7 +200,7 @@ void init() {
 
 	glGenBuffers(1, buffers);
 	glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
-	glBufferData(GL_ARRAY_BUFFER, (baseCube->get_points_size() + baseCube->get_quad_color_size()) * numOfObjects, NULL, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, baseCube->get_points_size()+ info->get_points_size(), NULL, GL_STATIC_DRAW);
 	std::cout << baseCube->get_points_size() << std::endl;
 	program = InitShader("vshader.glsl", "fshader.glsl");
 	glUseProgram(program);
@@ -220,6 +217,9 @@ void init() {
 	Modeltrans = glGetUniformLocation(program, "model_trans");
   	Projection = glGetUniformLocation(program, "Projection");
 	coloring = glGetUniformLocation(program, "objColor");
+	simple = glGetUniformLocation(program, "simple");
+
+
 	cam->setModelveiw(Modelview);
 	cam->setProjection(Projection);
 
@@ -237,20 +237,22 @@ extern "C" void display() {
 			baseCube->draw(true);
 			
 		}
-		if (testcube) {
-			outline->draw(true);
-			outline2->draw(true);
-			test4->draw(true);
-		}
+
 
 	}else{
 		//w1->updatePlayerpos(cameraPos);
 		w1->draw();
+		if (drawHud) {
+			glUniform1i(simple, true);
+
+			info->draw();
+			//glDrawArrays(GL_TRIANGLE_STRIP, baseCube->get_points_size(), baseCube->get_points_size() + info->get_points_size());
+			glUniform1i(simple, false);
+		}
 	}
 	glutSwapBuffers();
 }
 
-//mouse vars
 
 
 extern "C" void mouse(int btn, int state, int xpos, int ypos) {
@@ -261,7 +263,7 @@ extern "C" void mouse(int btn, int state, int xpos, int ypos) {
 
 void idle() {
 
-
+	static int delaytime = 2;
 	static GLint time = glutGet(GLUT_ELAPSED_TIME);
 	GLint deltatime = (glutGet(GLUT_ELAPSED_TIME) - time);
 
@@ -269,29 +271,23 @@ void idle() {
 		theta[axis] += incr * (deltatime);
 
 		baseCube->updateAngle(theta);
-		outline->updateAngle(theta);
-		outline2->updateAngle(theta);
-		test4->updateAngle(theta);
 	}
 	if (theta[axis] > 360.0) theta[axis] -= 360.0;
 
 
 
-	time = glutGet(GLUT_ELAPSED_TIME);
-
-
-
+	std::cout << time << std::endl;
 	// deal with movement
 	controler = true;
 	if (controler) {
 		controler = cam->processControllerInput();
+		//w1->setGridLines(cam->getGrids());
 	}
 	else {
 		controler = cam->connectControllerConected();
 	}
-	// check for collision
-	cam->moveCam();
 
+	cam->moveCam();
 
 
 	glutPostRedisplay();
@@ -301,6 +297,10 @@ extern "C" void mykey(unsigned char key, int mousex, int mousey) {
 	//float cameraSpeed = 2.5f;
 	switch (key)
 	{
+	case 27://hitting the escape key
+		drawHud = !drawHud;
+
+		break;
 	case 'q':
 	case 'Q':
 		exit(0);
@@ -415,32 +415,9 @@ void myinit(){
 	baseCube->setColor(color4(1.0, 0.0, 0.0, 1.0));
 	baseCube->init();
 
-	outline = new cube();
-	outline->setModelVeiw(Modeltrans);
-	outline->setColorloc(coloring);
-	outline->setindex(1);
-	outline->setColor(color4(0.0, 1.0, 0.0, 1.0));
-	outline->setLoc(vec3(0, 1, 0));
-	outline->init();
-	
-
-	outline2 = new cube();
-	outline2->setModelVeiw(Modeltrans);
-	outline2->setColorloc(coloring);
-	outline2->setindex(2);
-	outline2->setColor(color4(0.0, 0.0, 1.0, 1.0));
-	outline2->setLoc(vec3(0, 2, 0));
-	outline2->init();
-	
-
-	test4 = new cube();
-	test4->setModelVeiw(Modeltrans);
-	test4->setColorloc(coloring);
-	test4->setindex(4);
-	test4->setColor(color4(0.0, 1.0, 1.0, 1.0));
-	test4->setLoc(vec3(-1, -1, 0));
-	test4->init();
-
+	info = new hud();
+	info->init();
+	info->setColorloc(coloring);
 	
 	w1 = new world();
 	w1->setModelVeiw(Modeltrans);
