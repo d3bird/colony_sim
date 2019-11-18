@@ -8,13 +8,14 @@ world::world() {
 	xwidth = 20;
 
 
-	 drawdistance = 5;
-	 startLayer = 0;
-	 gridlines = false;
-	 drawhidden = false;
+	drawdistance = 5;
+	startLayer = 0;
+	gridlines = false;
+	drawhidden = false;
 
-	map = new cube ** [height];
+	map = new cube * *[height];
 
+	//creating the map of the world
 	for (int f = 0; f < height; f++) {
 
 		map[f] = new cube * [ywidth]; // generating the rows
@@ -22,12 +23,35 @@ world::world() {
 		for (int i = 0; i < ywidth; i++) {// generating the collums
 			map[f][i] = new cube[xwidth];
 		}
-
 	}
+
+	//creating the selection colors
+
+	selection = new  color4 * [ywidth];
+
+	for (int i = 0; i < ywidth; i++) {
+		selection[i] = new color4[xwidth];
+	}
+
+	for (int yi = 0; yi < ywidth; yi++) {
+		for (int xi = 0; xi < xwidth; xi++) {
+			selection[yi][xi].x = xi / xwidth;
+			selection[yi][xi].y = yi / ywidth;
+			//selection[yi][xi].x = (xi / xwidth) + (yi / ywidth);
+			//selection[yi][xi].y = 0;
+			selection[yi][xi].z = 0;
+			//selection[yi][xi].z = (xi / xwidth) + (yi / ywidth);
+			selection[yi][xi].w = 1;
+		}
+	}
+
+	//creating the trees
 	trees = new tree();
 	treeList = new std::vector<tree*>[height];
 
-
+	win_h = 900;
+	win_w = 900;
+	debug = false;
 }
 
 
@@ -37,10 +61,16 @@ world::~world(){
 	for (int f = 0; f < height; f++) {
 		for (int y = 0; y < ywidth; y++) {
 			delete[] map[f][y];
+			
 		}
 		delete[] map[f];
 	}
 	delete[] map;
+
+	for (int y = 0; y < ywidth; y++) {
+		delete[] selection[y];
+	}
+	delete[] selection;
 }
 
 void world::init() {
@@ -120,7 +150,15 @@ void world::draw(){
 		for (int y = 0; y < ywidth; y++) {
 			for (int x = 0; x < xwidth; x++) {
 				if (map[f][y][x].isvissible()|| (drawhidden && f == startLayer)) {
-					map[f][y][x].draw(gridlines);
+					if (!debug) {
+						map[f][y][x].draw(gridlines);
+					}
+					else {
+						//draws the back buffer instead of the normal colors
+						//needed to debug selection
+						color4 temp = selection[y][x];
+						map[f][y][x].drawSelec(temp);
+					}
 					
 				}
 			}
@@ -141,5 +179,75 @@ void world::update(){
 
 }
 
+void world::proccessMouse(int btn, int state, int x, int y) {
+
+	if (state == GLUT_DOWN) {
+		// Draw the scene with identifying colors
+		// Ensure the clear color isn't the same as any of your objects
+		glClearColor(0.0, 1.0, 0.0, 1.0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// Setting first parameter to true means to use the selection
+		// colors, not the object colors
+
+		for (int y = 0; y < ywidth; y++) {
+			for (int x = 0; x < xwidth; x++) {
+				//draws the back buffer instead of the normal colors
+				//needed to debug selection
+				color4 temp = selection[y][x];
+				map[startLayer][y][x].drawSelec(temp);
+
+			}
+		}
 
 
+		// Flush ensures all commands have drawn
+		glFlush();
+
+		// Read the value at the location of the cursor
+		// In the back buffer (not the one visible on-screen)
+		glReadBuffer(GL_BACK);
+		unsigned char PixelColor[3];
+		glReadPixels(x, win_h - y, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, &PixelColor);
+		std::cout << int(PixelColor[0]) << " "<< int(PixelColor[1]) << " "	<< int(PixelColor[2]) << std::endl;
+		processSelection(PixelColor, btn);
+
+		/*
+		glutSwapBuffers();
+		std::cout << "Type any character to continue: ";
+		char a;
+		std::cin >> a;
+		*/
+
+		glClearColor(0.0, 0.0, 0.0, 1.0);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+	}
+
+}
+
+void world::processSelection(unsigned char PixelColor[], int btn) {
+
+	//float r = PixelColor.x / 256;
+	if (PixelColor[1] ==255 ) {
+		std::cout << "not on the map" << std::endl;
+		return;
+	}
+	else {
+		for (int yi = 0; yi < ywidth; yi++) {
+			for (int xi = 0; xi < xwidth; xi++) {
+				if (cmpcolor(PixelColor, vec3(selection[yi][xi].x, selection[yi][xi].y, selection[yi][xi].z))) {
+					map[startLayer][yi][xi].setselected(true);
+				}
+			}
+		}
+	}
+}
+
+
+bool world::cmpcolor(unsigned char colora[], vec3 colorb)
+{
+	return((colora[0] == int(colorb.x * 255 + 0.5)) &&
+		(colora[1] == int(colorb.y * 255 + 0.5)) &&
+		(colora[2] == int(colorb.z * 255 + 0.5)));
+}

@@ -46,11 +46,20 @@ public:
 	void setDrawHidden(bool i) { drawhidden = i; }
 	bool drawlinghidden() { return drawhidden; }
 
-private:
+	void proccessMouse(int btn, int state, int x, int y);
 
-	int height;//the total height of the world
-	int ywidth;// the total width of the world
-	int xwidth;// the total length of the world
+	void toggleDebug() { debug = !debug; }
+
+	void setWindow(int x, int y) { win_w = x; win_h = y; }
+
+private:
+	void processSelection(unsigned char PixelColor[], int btn);
+	void setUpSelectioncolors();
+	bool cmpcolor(unsigned char colora[], vec3 colorb);
+
+	float height;//the total height of the world
+	float ywidth;// the total width of the world
+	float xwidth;// the total length of the world
 
 	int drawdistance;
 	int startLayer;
@@ -59,9 +68,14 @@ private:
 
 	bool gridlines;
 	bool drawhidden;
-	cube*** map;
+	cube*** map;//the map of the whole world
+	color4** selection;// the colors for selection
 	tree* trees;
 	std::vector<tree*>* treeList;// the trees are based on layers on wich they are grown
 	GLuint trans, coloring;
 
+	int win_h;
+	int win_w;
+
+	bool debug;
 };

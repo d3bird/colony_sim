@@ -34,8 +34,8 @@ cube::cube() {
 	loc.y = 0;
 	loc.z = 0;
 
-	special = false;
-
+	//special = false;
+	selected = false;
 	// table stats
 	vertices[0] = point4(-width, -(height), length, 1.0);
 	vertices[1] = point4(-width, (height), length, 1.0);
@@ -53,6 +53,9 @@ cube::cube() {
 	placeIndex = 0;
 	//Modeltrans = 0;
 	//init();
+	changed = true;
+
+	Scolor = color4(1.0, 0.0, 1.0, 1.0);
 }
 
 
@@ -60,6 +63,7 @@ cube::cube() {
 void cube::setLoc(vec3 i){
 	loc = i;
 	tloc = Translate(loc.x * gridOfset, loc.y * gridOfset, loc.z * gridOfset);
+	changed = true;
 }
 
 
@@ -143,11 +147,25 @@ void cube::calTranMat() {
 
 
 void cube::draw(bool i) {
-	calTranMat();
-	if (!vissible) {
+	//only update the matrix if somehting has changed about the cube
+	if (changed) {
+		calTranMat();
+		changed = false;
+	}
+	else {
+		glUniformMatrix4fv(trans, 1, GL_TRUE, (model_veiw_base));
+		glUniform4f(coloring, material_diffuse.x, material_diffuse.y, material_diffuse.z, material_diffuse.w);
+	}
+
+	if (selected) {
+		glUniform4f(coloring, Scolor.x, Scolor.y, Scolor.z, Scolor.w);
+	}
+	else if (!vissible) {
 		glUniform4f(coloring, hidden.x, hidden.y, hidden.z, hidden.w);
 	}
+
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices); // the top of the table
+	//if we need to draw the outline
 	if (i) {
 		glUniform4f(coloring, outline.x, outline.y, outline.z, outline.w);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -156,6 +174,14 @@ void cube::draw(bool i) {
 		glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
+}
+
+//draw with the selected color
+void cube::drawSelec(color4 i) {
+	calTranMat();
+	glUniformMatrix4fv(trans, 1, GL_TRUE, (model_veiw_base));
+	glUniform4f(coloring, i.x, i.y, i.z, i.w);
+	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 }
 
 void cube::update(){
@@ -181,3 +207,4 @@ void cube::init() {
 	glUniformMatrix4fv(trans, 1, GL_TRUE, (model_veiw_base));
 	glUniformMatrix4fv(coloring, 1, GL_TRUE, (material_diffuse));
 }
+

@@ -180,6 +180,7 @@ int Wwidth = 900;
 
 extern "C" void reshape(int width, int height){
 	cam->reshape( width,  height);
+	w1->setWindow(width, height);
 }
 
 extern "C" void motion(int xpos, int ypos)
@@ -256,9 +257,15 @@ extern "C" void display() {
 
 
 extern "C" void mouse(int btn, int state, int xpos, int ypos) {
-	if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN) axis = 0;
-	if (btn == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN) axis = 1;
-	if (btn == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) axis = 2;
+	if (game) {
+		w1->proccessMouse(btn, state, xpos, ypos);
+	}else{
+
+		if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN) axis = 0;
+		if (btn == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN) axis = 1;
+		if (btn == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) axis = 2;
+	}
+	glutPostRedisplay();
 }
 
 void idle() {
@@ -276,15 +283,19 @@ void idle() {
 
 
 
-	std::cout << time << std::endl;
+	//std::cout << time << std::endl;
 	// deal with movement
-	controler = true;
+	
 	if (controler) {
 		controler = cam->processControllerInput();
-		//w1->setGridLines(cam->getGrids());
+		w1->setGridLines(cam->getGrids());
+
 	}
 	else {
 		controler = cam->connectControllerConected();
+		if (controler) {
+			std::cout << "controller was connected" << std::endl;
+		}
 	}
 
 	cam->moveCam();
@@ -339,11 +350,12 @@ extern "C" void mykey(unsigned char key, int mousex, int mousey) {
 
 
 	case '1':
-		basecube = !basecube;
+		//basecube = !basecube;
+		w1->toggleDebug();
 		break;
 
 	case '2':
-		testcube = !testcube;
+		//testcube = !testcube;
 		break;
 
 	case 'H':

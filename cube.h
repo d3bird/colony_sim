@@ -24,7 +24,7 @@ public:
 
 	void init();
 	void draw(bool i);
-
+	void drawSelec(color4 i);
 	void update();
 	void colorcube();
 	void MyQuad(int a, int b, int c, int d);
@@ -34,25 +34,27 @@ public:
 	GLuint get_points_size() { return sizeof(points); }
 	GLuint get_loc_size() { return sizeof(loc); }
 
-	void setModelVeiw(GLuint i) { trans = i;  }
+	void setModelVeiw(GLuint i) { trans = i; }
 	void setColorloc(GLuint i) { coloring = i; }
 	void setindex(int i) { placeIndex = i; }
 
 	void calTranMat();
 	void setLoc(vec3 i);
 
-	int getHeight(){return  length;}
+	int getHeight() { return  length; }
 
-	void setColor(color4 i){material_diffuse =i; colorcube();}
+	void setColor(color4 i) { material_diffuse = i; colorcube(); changed = true; }
+
+
+	bool isselected() { return selected; }
+	void setselected(bool i) { selected = i; }
 
 	//old code
-	void updateVeiwer(vec4 i){ viewer =i;}
-	void updateLightPos(point4 i){light_position = i;}
-	bool isspecial(){return special;}
-	void setspecial(bool i){special =i;}
+	void updateVeiwer(vec4 i) { viewer = i; }
+	void updateLightPos(point4 i) { light_position = i; }
 	bool isvissible() { return vissible; }
 	void setvissible(bool i) { vissible = i; }
-	
+
 private:
 
 	bool vissible;
@@ -62,12 +64,14 @@ private:
 	}
 	//the arbitrary value that makes the block apear right next to each other
 	double gridOfset = 0.27;
-
-	bool special;
+	//double gridOfset = 1;
+	bool selected;
 	const static int NumVertices = 36;// was 36
 	point4  vertices[8];// was 8
 	point4  vertices2[8];// was 8
 	point4  vertices3[8];
+
+	// colors for dynamic lighting
 	color4 material_ambient;
 	vec4 material_diffuse;
 	color4 material_specular;
@@ -76,28 +80,39 @@ private:
 	color4 light_ambient;
 	color4 light_diffuse;
 	color4 light_specular;
+	bool spec;
 
+	//selected color
+	color4 Scolor;
+
+	//rotation angles for lighting
 	float theta[3];
+
 
 	color4 outline;
 	color4 hidden;
 
 	point4 points[NumVertices];
+
+	//not functional for now
 	color4 quad_color[NumVertices];
+	vec4 viewer;
+	int amountOfcubes = 3;
 
-
+	//locations for the values in the shader
 	GLuint  trans, coloring;
 
+	//location of the cube in the wolrd
 	vec3 loc;
 
-	vec4 viewer;
 
+	//the dimentions of the base cube
 	int scale;
-	int width;//315
-	int length;//
-	int height;//
+	int width;
+	int length;
+	int height;
 
-	int amountOfcubes = 3;
+
 	int placeIndex;
 
 	//rotation transformation 
@@ -106,8 +121,10 @@ private:
 	//transformation for the location in the world 
 	mat4 tloc;
 
+	//matrix to passed to the shader
 	mat4 model_veiw_base;
 
-	// NOTE: SPECULAR LIGHTING to start!!
-	bool spec;
+	//if the cube needs to recalulate a matrix
+	bool changed;
+
 };
