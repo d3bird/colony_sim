@@ -42,6 +42,8 @@ world::world() {
 			selection[yi][xi].z = 0;
 			//selection[yi][xi].z = (xi / xwidth) + (yi / ywidth);
 			selection[yi][xi].w = 1;
+			//selection[yi][xi] = color4(xi / 255, yi / 255, 0.0, 1.0);
+			//std::cout << temp * 255 + 0.5 << " " << selection[yi][xi].y * 255 + 0.5 << " " << selection[yi][xi].z * 255 + 0.5 << std::endl;
 		}
 	}
 
@@ -184,7 +186,7 @@ void world::proccessMouse(int btn, int state, int x, int y) {
 	if (state == GLUT_DOWN) {
 		// Draw the scene with identifying colors
 		// Ensure the clear color isn't the same as any of your objects
-		glClearColor(0.0, 1.0, 0.0, 1.0);
+		glClearColor(0.0, 0.0, 1.0, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Setting first parameter to true means to use the selection
@@ -219,7 +221,7 @@ void world::proccessMouse(int btn, int state, int x, int y) {
 		std::cin >> a;
 		*/
 
-		glClearColor(0.0, 0.0, 0.0, 1.0);
+		glClearColor(1.0, 1.0, 1.0, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 	}
@@ -229,18 +231,34 @@ void world::proccessMouse(int btn, int state, int x, int y) {
 void world::processSelection(unsigned char PixelColor[], int btn) {
 
 	//float r = PixelColor.x / 256;
-	if (PixelColor[1] ==255 ) {
+	if (PixelColor[1] == 255) {
 		std::cout << "not on the map" << std::endl;
 		return;
 	}
 	else {
 		for (int yi = 0; yi < ywidth; yi++) {
 			for (int xi = 0; xi < xwidth; xi++) {
-				if (cmpcolor(PixelColor, vec3(selection[yi][xi].x, selection[yi][xi].y, selection[yi][xi].z))) {
+				//if (cmpcolor(PixelColor, vec3(selection[yi][xi].x, selection[yi][xi].y, selection[yi][xi].z)) 
+				//	|| cmpcolor2(PixelColor, vec3(selection[yi][xi].x, selection[yi][xi].y, selection[yi][xi].z))
+				//	|| cmpcolor3(PixelColor, vec3(selection[yi][xi].x, selection[yi][xi].y, selection[yi][xi].z))) {
+				//	map[startLayer][yi][xi].setselected(true);
+				//	return;
+				//}
+
+
+				if (cmpcolor(PixelColor, vec3(selection[yi][xi].x, selection[yi][xi].y, selection[yi][xi].z))
+					|| cmpcolor4(PixelColor, vec3(selection[yi][xi].x, selection[yi][xi].y, selection[yi][xi].z))) {
 					map[startLayer][yi][xi].setselected(true);
+					return;
 				}
+
 			}
 		}
+
+		std::cout << "could not find value" << std::endl;
+		std::cout << (int)PixelColor[0] << " " << (int)PixelColor[1] << " " << (int)PixelColor[2] << std::endl;
+		//std::cout<<selection[yi][xi].x<<" "<< selection[yi][xi].y<< " "<< selection[yi][xi].z << std::endl;
+
 	}
 }
 
@@ -251,3 +269,28 @@ bool world::cmpcolor(unsigned char colora[], vec3 colorb)
 		(colora[1] == int(colorb.y * 255 + 0.5)) &&
 		(colora[2] == int(colorb.z * 255 + 0.5)));
 }
+
+bool world::cmpcolor2(unsigned char colora[], vec3 colorb)
+{
+	return((colora[0] == int(colorb.x * 255 - 0.5)) &&
+		(colora[1] == int(colorb.y * 255 - 0.5)) &&
+		(colora[2] == int(colorb.z * 255 - 0.5)));
+}
+
+
+bool world::cmpcolor3(unsigned char colora[], vec3 colorb)
+{
+	return((colora[0] == int(colorb.x * 255 )) &&
+		(colora[1] == int(colorb.y * 255 )) &&
+		(colora[2] == int(colorb.z * 255 )));
+}
+
+
+bool world::cmpcolor4(unsigned char colora[], vec3 colorb)
+{
+		return (  ((colora[0] == int(colorb.x * 255 - 0.5)) || (colora[0] == int(colorb.x * 255 + 0.5) )) &&
+			      ((colora[1] == int(colorb.y * 255 - 0.5)) || (colora[1] == int(colorb.y * 255 + 0.5))) &&
+		          (colora[2] == int(colorb.z * 255 - 0.5) || colora[2] == int(colorb.z * 255 + 0.5)));
+}
+
+

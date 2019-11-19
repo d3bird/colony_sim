@@ -53,10 +53,15 @@ public:
 	void setWindow(int x, int y) { win_w = x; win_h = y; }
 
 private:
+	
 	void processSelection(unsigned char PixelColor[], int btn);
 	void setUpSelectioncolors();
 	bool cmpcolor(unsigned char colora[], vec3 colorb);
-
+	bool cmpcolor2(unsigned char colora[], vec3 colorb);
+	bool cmpcolor3(unsigned char colora[], vec3 colorb);
+	bool cmpcolor4(unsigned char colora[], vec3 colorb);
+	bool cmpcolor5(unsigned char colora[], vec3 colorb);
+	bool cmpcolor6(unsigned char colora[], vec3 colorb);
 	float height;//the total height of the world
 	float ywidth;// the total width of the world
 	float xwidth;// the total length of the world

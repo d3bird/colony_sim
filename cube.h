@@ -49,6 +49,8 @@ public:
 	bool isselected() { return selected; }
 	void setselected(bool i) { selected = i; }
 
+	
+
 	//old code
 	void updateVeiwer(vec4 i) { viewer = i; }
 	void updateLightPos(point4 i) { light_position = i; }
