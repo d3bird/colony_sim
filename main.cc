@@ -268,6 +268,7 @@ extern "C" void mouse(int btn, int state, int xpos, int ypos) {
 	glutPostRedisplay();
 }
 
+
 void idle() {
 
 	static int delaytime = 2;
@@ -355,7 +356,7 @@ extern "C" void mykey(unsigned char key, int mousex, int mousey) {
 		break;
 
 	case '2':
-		//testcube = !testcube;
+		w1->setMultiselecct();
 		break;
 
 	case 'H':
@@ -439,7 +440,7 @@ void myinit(){
 }
 
 
-int main(int argc, char** argv){
+int main(int argc, char** argv) {
 	cam = new camera();
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
@@ -451,12 +452,13 @@ int main(int argc, char** argv){
 	glutReshapeFunc(reshape);
 	glutIdleFunc(idle);
 	glutKeyboardFunc(mykey);
-	 glutPassiveMotionFunc (motion);
-	setupMenu();
-	glutMenuStatusFunc(menustatus);
+	glutPassiveMotionFunc(motion);
+	glutMotionFunc(NULL);
+	//setupMenu();
+	//glutMenuStatusFunc(menustatus);
 
 	glewInit();
-	glutWarpPointer(450,450); 
+	glutWarpPointer(450, 450);
 	init();
 	myinit();
 	glEnable(GL_DEPTH_TEST);

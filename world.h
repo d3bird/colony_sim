@@ -52,16 +52,18 @@ public:
 
 	void setWindow(int x, int y) { win_w = x; win_h = y; }
 
+	void setMultiselecct() { multiSelcting = true; }
+
 private:
 	
 	void processSelection(unsigned char PixelColor[], int btn);
-	void setUpSelectioncolors();
 	bool cmpcolor(unsigned char colora[], vec3 colorb);
 	bool cmpcolor2(unsigned char colora[], vec3 colorb);
 	bool cmpcolor3(unsigned char colora[], vec3 colorb);
 	bool cmpcolor4(unsigned char colora[], vec3 colorb);
-	bool cmpcolor5(unsigned char colora[], vec3 colorb);
-	bool cmpcolor6(unsigned char colora[], vec3 colorb);
+	
+	void multiselect(int yi, int xi);
+
 	float height;//the total height of the world
 	float ywidth;// the total width of the world
 	float xwidth;// the total length of the world
@@ -73,6 +75,17 @@ private:
 
 	bool gridlines;
 	bool drawhidden;
+
+	//these are the different bools to determin what the mouse does
+	bool multiSelcting;
+
+	
+
+	//these are for the multi select command
+	bool firstPoint;
+	vec3 pointOne;
+	vec3 pointTwo;
+
 	cube*** map;//the map of the whole world
 	color4** selection;// the colors for selection
 	tree* trees;
