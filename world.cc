@@ -56,6 +56,7 @@ world::world() {
 	debug = false;
 	multiSelcting = false;
 	firstPoint = false;
+	point2init = false;
 }
 
 
@@ -240,16 +241,8 @@ void world::processSelection(unsigned char PixelColor[], int btn) {
 	else {
 		for (int yi = 0; yi < ywidth; yi++) {
 			for (int xi = 0; xi < xwidth; xi++) {
-				//if (cmpcolor(PixelColor, vec3(selection[yi][xi].x, selection[yi][xi].y, selection[yi][xi].z)) 
-				//	|| cmpcolor2(PixelColor, vec3(selection[yi][xi].x, selection[yi][xi].y, selection[yi][xi].z))
-				//	|| cmpcolor3(PixelColor, vec3(selection[yi][xi].x, selection[yi][xi].y, selection[yi][xi].z))) {
-				//	map[startLayer][yi][xi].setselected(true);
-				//	return;
-				//}
 
-
-				if (cmpcolor(PixelColor, vec3(selection[yi][xi].x, selection[yi][xi].y, selection[yi][xi].z))
-					|| cmpcolor4(PixelColor, vec3(selection[yi][xi].x, selection[yi][xi].y, selection[yi][xi].z))) {
+				if (cmpcolor4(PixelColor, vec3(selection[yi][xi].x, selection[yi][xi].y, selection[yi][xi].z))) {
 					if (multiSelcting) {
 						//std::cout << "multisection is enabled" << std::endl;
 						multiselect(yi, xi);
@@ -275,6 +268,7 @@ void world::multiselect(int yi, int xi) {
 
 	if (!firstPoint) {
 		pointOne = vec3(startLayer, yi, xi);
+		pointTwo = pointOne;
 		firstPoint = true;
 		map[startLayer][yi][xi].setselected(true);
 	}
@@ -284,6 +278,9 @@ void world::multiselect(int yi, int xi) {
 
 		int diffy = pointOne.y - yi;
 		int diffx = pointOne.z - xi;
+
+		pointTwo.y = yi;
+		pointTwo.z = xi;
 
 		int wx = pointOne.z;
 		int wy = pointOne.y;
@@ -364,6 +361,78 @@ void world::multiselect(int yi, int xi) {
 	}
 }
 
+//clears an area from the first point to the point given in the prameters
+void world::clearArea() {
+
+	if (pointOne == pointTwo) {
+		return;
+	}
+
+	int diffy = pointOne.y - pointTwo.y;
+	int diffx = pointOne.z - pointTwo.z;
+
+	int wx = pointOne.z;
+	int wy = pointOne.y;
+
+	//make sure the the differences are positive
+	int t1 = diffy;
+	int t2 = diffx;
+
+	bool t1Neg = false;
+	bool t2Neg = false;
+	if (t1 < 0) {
+		t1 *= -1;
+		t1Neg = true;
+	}
+	if (t2 < 0) {
+		t2 *= -1;
+		t2Neg = true;
+	}
+	for (int q = 0; q < t1 + 1; q++) {
+		for (int a = 0; a < t2 + 1; a++) {
+
+			if (t1Neg && t2Neg) {
+				map[startLayer][wy + q][wx + a].setselected(false);
+			}
+			else if (t1Neg) {
+				map[startLayer][wy + q][wx - a].setselected(false);
+			}
+			else if (t2Neg) {
+				map[startLayer][wy - q][wx + a].setselected(false);
+			}
+			else {
+				map[startLayer][wy - q][wx - a].setselected(false);
+			}
+		}
+	}
+
+}
+
+
+
+void world::shawdowSelect(int yi, int xi) {
+	if (multiSelcting && firstPoint) {
+		
+		//pointOne.y != yi || pointOne.z != xi
+		if (!point2init) {
+			pointTwo.x = startLayer;
+			pointTwo.y = yi;
+			pointTwo.z = xi;
+			point2init = true;
+		}
+		else {
+				clearArea();
+				proccessMouse(0, GLUT_DOWN, xi, yi);
+				firstPoint = true;
+				multiSelcting = true;
+				//map[startLayer][(int)pointTwo.y][(int)pointTwo.z].setselected(false);
+				//pointTwo.y = yi;
+				//pointTwo.z = xi;
+				//map[startLayer][yi][xi].setselected(true);
+			
+		}
+	}
+}
 
 bool world::cmpcolor(unsigned char colora[], vec3 colorb)
 {

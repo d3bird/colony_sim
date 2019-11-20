@@ -53,6 +53,7 @@ public:
 	void setWindow(int x, int y) { win_w = x; win_h = y; }
 
 	void setMultiselecct() { multiSelcting = true; }
+	void shawdowSelect(int yi, int xi);
 
 private:
 	
@@ -63,6 +64,8 @@ private:
 	bool cmpcolor4(unsigned char colora[], vec3 colorb);
 	
 	void multiselect(int yi, int xi);
+	void clearArea();
+	
 
 	float height;//the total height of the world
 	float ywidth;// the total width of the world
@@ -83,6 +86,8 @@ private:
 
 	//these are for the multi select command
 	bool firstPoint;
+	bool diffpoint;
+	bool point2init;
 	vec3 pointOne;
 	vec3 pointTwo;
 
