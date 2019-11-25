@@ -191,7 +191,7 @@ void world::proccessMouse(int btn, int state, int x, int y) {
 	if (state == GLUT_DOWN) {
 		// Draw the scene with identifying colors
 		// Ensure the clear color isn't the same as any of your objects
-		glClearColor(0.0, 0.0, 1.0, 1.0);
+		glClearColor(1.0, 1.0, 1.0, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Setting first parameter to true means to use the selection
@@ -241,26 +241,43 @@ void world::processSelection(unsigned char PixelColor[], int btn) {
 		return;
 	}
 	else {
-		for (int yi = 0; yi < ywidth; yi++) {
-			for (int xi = 0; xi < xwidth; xi++) {
-
-				if (cmpcolor4(PixelColor, vec3(selection[yi][xi].x, selection[yi][xi].y, selection[yi][xi].z))) {
-					if (multiSelcting) {
-						//std::cout << "multisection is enabled" << std::endl;
-						multiselect(yi, xi);
-					}
-					else {
-						map[startLayer][yi][xi].setselected(true);
-					}
-					return;
-				}
-
+		int ox =-1;
+		int oy = -1;
+		vec3 colorb = vec3(selection[0][0].x, selection[0][0].y, selection[0][0].z);
+		
+		//finds the x matching color then breaks out
+		for (int xi = 0; xi < xwidth; xi++) {
+			colorb.x = selection[0][xi].x;
+			if ((PixelColor[0] == int(colorb.x * 255 - 0.5)) || (PixelColor[0] == int(colorb.x * 255 + 0.5))) {
+				ox = xi;
+				break;
 			}
 		}
-
+		//finds the y matiching color then breaks out
+		for (int yi = 0; yi < ywidth; yi++) {
+			colorb.y = selection[yi][0].y;
+			if ((PixelColor[1] == int(colorb.y * 255 - 0.5)) || (PixelColor[1] == int(colorb.y * 255 + 0.5))) {
+				oy = yi;
+				break;
+			}
+		}
+		
+		//test to make sure that the color was found
+		if (ox == -1 || oy == -1) {
 		std::cout << "could not find value" << std::endl;
 		std::cout << (int)PixelColor[0] << " " << (int)PixelColor[1] << " " << (int)PixelColor[2] << std::endl;
 		//std::cout<<selection[yi][xi].x<<" "<< selection[yi][xi].y<< " "<< selection[yi][xi].z << std::endl;
+		return;
+		}
+
+		//preform the action of the mouse click 
+		if (multiSelcting) {
+			//std::cout << "multisection is enabled" << std::endl;
+			multiselect(oy, ox);
+		}
+		else {
+			map[startLayer][oy][ox].setselected(true);
+		}
 
 	}
 }
@@ -423,7 +440,7 @@ void world::shawdowSelect(int yi, int xi) {
 			point2init = true;
 		}
 		else {
-				clearArea();
+				//clearArea();
 				proccessMouse(0, GLUT_DOWN, xi, yi);
 				firstPoint = true;
 				multiSelcting = true;

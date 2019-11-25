@@ -55,7 +55,10 @@ cube::cube() {
 	//init();
 	changed = true;
 
-	Scolor = color4(1.0, 0.0, 1.0, 1.0);
+	//Scolor = color4(1.0, 0.75, 0.0, 1.0);//light amber
+	//Scolor = color4(255.0 / 255.0, 133.0 / 255.0, 3.0 / 255.0, 1.0);//darker orange
+	//Scolor = color4(254.0 / 255.0, 178.0 / 255.0, 4.0 / 255.0, 1.0);// orange
+	Scolor = color4(229.0 / 255.0, 148.0 / 255.0, 25.0 / 255.0, 1.0);//golden brown
 }
 
 
