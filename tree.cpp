@@ -13,6 +13,7 @@ tree::tree(GLuint t, GLuint c) {
 	trans = t;
 	color4 leaves = color4(0.3216, 0.4196, 0.1765, 1.0);
 	color4 bark = color4(0.549, 0.3843, 0.3451, 1.0);
+	type = 0;
 }
 
 tree::tree() {
@@ -32,7 +33,7 @@ tree::tree() {
 	color4 leaves2;
 	color4 leaves3;
 	color4 leaves4;
-
+	type = 0;
 }
 
 tree::~tree() {
@@ -70,32 +71,42 @@ void tree::init() {
 			blocks[i].setindex(1);
 			blocks[i].setvissible(true);
 			if (i >= 4) {
-				std::random_device rd;
-				std::mt19937 mt(rd());
 
-				std::uniform_real_distribution<double> distribution(0, 40);
-				dec = ((int) distribution(mt)) % 2;
-				switch (dec) {
-				case 0:
-					blocks[i].setColor(leaves1);
-					break;
-				case 1:
-					blocks[i].setColor(leaves3);
-					break;
-				case 2:
-					blocks[i].setColor(leaves3);
-					break;
-				case 3:
-				//	blocks[i].setColor(leaves4);
-					break;
-				default:
-					blocks[i].setColor(leaves);// deff leaf color
-					break;
+				if (type == 1) {
+					std::random_device rd;
+					std::mt19937 mt(rd());
+
+					std::uniform_real_distribution<double> distribution(0, 40);
+					dec = ((int)distribution(mt)) % 2;
+					switch (dec) {
+					case 0:
+						blocks[i].setColor(leaves1);
+						break;
+					case 1:
+						blocks[i].setColor(leaves3);
+						break;
+					case 2:
+						blocks[i].setColor(leaves3);
+						break;
+					case 3:
+						//	blocks[i].setColor(leaves4);
+						break;
+					default:
+						blocks[i].setColor(leaves);// deff leaf color
+						break;
+					}
 				}
-				
+				else {
+					blocks[i].setColor(leaves);
+				}
 			}
 			else {
-				blocks[i].setColor(bark);// bark color
+				if (type == 1) {
+					blocks[i].setColor(bark);// bark color
+				}
+				else {
+					blocks[i].setColor(bark);// bark color
+				}
 			}
 			blocks[i].setLoc(vec3(x, y + 1 + i, z));
 			blocks[i].init();

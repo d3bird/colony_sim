@@ -23,12 +23,13 @@ public:
 
 	int getCubenumber() { return ncubes; }
 
+	void setTreeType(int i) { type = i; }
 private:
 	bool rinit;
 	int x;
 	int y;
 	int z;
-
+	int type;
 	GLuint trans;
 	GLuint coloring;
 

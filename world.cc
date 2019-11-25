@@ -108,6 +108,7 @@ void world::init() {
 	trees->setColorloc(coloring);
 	trees->setModelVeiw(trans);
 	trees->setLoc(loc);
+	trees->setTreeType(0);
 	trees->init();
 	int temp = loc.y;
 	if (temp < 0) {
@@ -121,6 +122,7 @@ void world::init() {
 	trees->setColorloc(coloring);
 	trees->setModelVeiw(trans);
 	trees->setLoc(loc);
+	trees->setTreeType(1);
 	trees->init();
 	 temp = loc.y;
 	 if (temp < 0) {
