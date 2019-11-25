@@ -1,6 +1,8 @@
 #pragma once
 #include "Angel.h"
 #include "cube.h"
+#include <stdlib.h>
+#include <random>
 
 typedef Angel::vec4  point4;
 typedef Angel::vec4  color4;
@@ -32,8 +34,15 @@ private:
 
 	int ncubes;
 
+	//deffult
 	color4 leaves;
 	color4 bark;
+
+	//leave varation colors
+	color4 leaves1;
+	color4 leaves2;
+	color4 leaves3;
+	color4 leaves4;
 
 	cube* blocks;
 };
