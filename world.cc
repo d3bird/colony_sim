@@ -438,7 +438,7 @@ void world::shawdowSelect(int yi, int xi) {
 			point2init = true;
 		}
 		else {
-				clearArea();
+				//clearArea();
 				proccessMouse(0, GLUT_DOWN, xi, yi);
 				firstPoint = true;
 				multiSelcting = true;
