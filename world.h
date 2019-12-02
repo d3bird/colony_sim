@@ -18,6 +18,7 @@
 #include <iostream>
 #include "cube.h"
 #include "tree.h"
+#include "creature.h"
 #include <vector>
 
 typedef Angel::vec4  point4;
@@ -95,6 +96,7 @@ private:
 	color4** selection;// the colors for selection
 	tree* trees;
 	std::vector<tree*>* treeList;// the trees are based on layers on wich they are grown
+	std::vector<creature*> Creatures;
 	GLuint trans, coloring;
 
 	int win_h;

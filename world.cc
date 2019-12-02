@@ -130,6 +130,15 @@ void world::init() {
 	 }
 	treeList[temp].push_back(trees);
 
+	creature *beast;
+	beast = new creature();
+	loc = vec3(1, 1, 12);
+	beast->setColorloc(coloring);
+	beast->setModelVeiw(trans);
+	beast->setLoc(loc);
+	beast->init();
+	Creatures.push_back(beast);
+
 }
 
 void world::increaseLayer() {
@@ -176,14 +185,20 @@ void world::draw(){
 			}
 		}
 	}
-
-
+	//draw each of the creatures
+	for (int i = 0; i < Creatures.size(); i++) {
+		//std::cout << "asd" << std::endl;
+		Creatures[i]->draw();
+	}
 
 	//trees->draw(gridlines);
 }
 
 void world::update(){
-
+	for (int i = 0; i < Creatures.size(); i++) {
+		//std::cout << "asd" << std::endl;
+		Creatures[i]->update();
+	}
 }
 
 void world::proccessMouse(int btn, int state, int x, int y) {

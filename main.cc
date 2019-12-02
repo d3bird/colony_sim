@@ -202,7 +202,7 @@ void init() {
 
 	glGenBuffers(1, buffers);
 	glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
-	glBufferData(GL_ARRAY_BUFFER, baseCube->get_points_size()+ info->get_points_size(), NULL, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, baseCube->get_points_size()+ info->get_points_size()+ baseCube->get_points_size(), NULL, GL_STATIC_DRAW);
 	std::cout << baseCube->get_points_size() << std::endl;
 	program = InitShader("vshader.glsl", "fshader.glsl");
 	glUseProgram(program);
@@ -299,7 +299,7 @@ void idle() {
 			std::cout << "controller was connected" << std::endl;
 		}
 	}
-
+	w1->update();
 	cam->moveCam();
 
 
@@ -421,7 +421,7 @@ void setupMenu() {
 }
 
 void myinit(){
-	std::cout << "screating objects" << std::endl;
+	std::cout << "creating objects" << std::endl;
 	baseCube = new cube();
 	baseCube->setindex(0);
 	baseCube->setModelVeiw(Modeltrans);
@@ -446,7 +446,7 @@ int main(int argc, char** argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowSize(900, 900);
-	glutCreateWindow("object viewer");
+	glutCreateWindow("0.7");
 	//SetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
 	glutDisplayFunc(display);
 	glutMouseFunc(mouse);
