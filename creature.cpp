@@ -65,7 +65,7 @@ void creature::pathFiding() {
 	//  if (length(dir)==0.0) {
 
 	//  }else{
-	if (std::sqrt(dot(dir, dir)) > 1.0) {
+	if (std::sqrt(dot(dir, dir)) > 0.01) {
 		dir = (compute_time()) * movespeed; //* normalize(dir);
 		// Update location
 
