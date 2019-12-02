@@ -56,6 +56,8 @@ public:
 	void setMultiselecct() { multiSelcting = true; }
 	void shawdowSelect(int yi, int xi);
 
+	void setDestination() { direction = true; }
+	void setMining() { mining = true; }
 private:
 	
 	void processSelection(unsigned char PixelColor[], int btn);
@@ -103,4 +105,8 @@ private:
 	int win_w;
 
 	bool debug;
+
+	//everything to do with the command system
+	bool direction;
+	bool mining;
 };

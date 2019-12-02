@@ -13,6 +13,8 @@ creature::creature() {
 	loc.y = 0;
 	loc.z = 0;
 
+	goal = loc;
+
 	//special = false;
 	selected = false;
 	// table stats
@@ -31,6 +33,9 @@ creature::creature() {
 
 	defColor = color4(0, 0, 1.0, 1.0);
 
+	movespeed = 0.001;
+	destOffset = 0.02;
+	newGoal = false;
 }
 
 void creature::draw() {
@@ -45,11 +50,57 @@ void creature::draw(bool i) {
 }
 
 void creature::update() {
-	loc.x += .001;
+	pathFiding();
 	tloc = Translate(loc.x * gridOfset, loc.y * gridOfset, loc.z * gridOfset);
 	model_veiw_base = tloc * ctm;
 	glUniformMatrix4fv(trans, 1, GL_TRUE, (model_veiw_base));
 }
+
+
+void creature::pathFiding() {
+
+	//if (newGoal) {
+
+	//	if (loc.x != goal.x) {
+	//		if (loc.x > goal.x) {
+	//			loc.x -= movespeed;
+	//		}
+	//		else {
+	//			loc.x += movespeed;
+	//		}
+	//	}
+	//	else {
+
+
+	//	}
+
+	vec2 dir = vec2(goal.x - loc.x, goal.z - loc.z);
+	//  if (length(dir)==0.0) {
+
+	//  }else{
+	if (std::sqrt(dot(dir, dir)) > 1.0) {
+		dir = (compute_time()) * movespeed; //* normalize(dir);
+		// Update location
+
+
+
+		//loc.x += dir.x;
+		if (loc.x < goal.x) {
+			loc.x += dir.x;
+		}
+		else {
+			loc.x -= dir.x;
+		}
+	}
+	else {
+		loc.x = goal.x;
+		loc.z = goal.z;
+	}
+	set_last_time();
+
+}
+	
+
 
 void creature::init() {
 	colorcube();
@@ -61,11 +112,18 @@ void creature::init() {
 
 void creature::setLoc(vec3 i) {
 	loc = i;
+	goal = i;
 	tloc = Translate(loc.x * gridOfset, loc.y * gridOfset, loc.z * gridOfset);
 	changed = true;
+	newGoal = false;
 }
 
-
+void creature::setGoal(vec3 i) {
+	std::cout << "goal was to: " << goal.z << " " << goal.y << " " << goal.x << std::endl;
+	goal = i;
+	std::cout << "goal changed to: " << goal.z << " " << goal.y << " " << goal.x << std::endl;
+	newGoal = true;
+}
 
 
 void creature::MyQuad(int a, int b, int c, int d) {
@@ -138,4 +196,24 @@ void creature::calTranMat() {
 	model_veiw_base = tloc * ctm;
 	glUniformMatrix4fv(trans, 1, GL_TRUE, (model_veiw_base));
 	glUniform4f(coloring, defColor.x, defColor.y, defColor.z, defColor.w);
+}
+
+
+void creature::set_last_time()
+{
+	// When did we last update object
+	last_time = glutGet(GLUT_ELAPSED_TIME);
+}
+
+// Update the last time object was modified to now.
+void creature::reset_time()
+{
+	// What is the time in the simulation.
+	current_time = 0;
+}
+
+// Returns the amount of time since we last updated the object.
+GLint creature::compute_time()
+{
+	return(glutGet(GLUT_ELAPSED_TIME) - last_time);
 }

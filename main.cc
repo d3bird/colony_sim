@@ -359,7 +359,30 @@ extern "C" void mykey(unsigned char key, int mousex, int mousey) {
 	case '2':
 		w1->setMultiselecct();
 		break;
-
+	case '3':
+		w1->setDestination();
+		break;
+	case '4':
+		w1->setMining();
+		break;
+	case '5':
+		
+		break;
+	case '6':
+		
+		break;
+	case '7':
+		
+		break;
+	case '8':
+		
+		break;
+	case '9':
+		
+		break;
+	case '0':
+		
+		break;
 	case 'H':
 	case 'h':
 		w1->setDrawHidden(!w1->drawlinghidden());

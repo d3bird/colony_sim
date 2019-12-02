@@ -284,7 +284,11 @@ void world::processSelection(unsigned char PixelColor[], int btn) {
 		//std::cout<<selection[yi][xi].x<<" "<< selection[yi][xi].y<< " "<< selection[yi][xi].z << std::endl;
 		return;
 		}
-
+		//set destination for action
+		if (direction) {
+			map[startLayer][oy][ox].setselected(true);
+			Creatures[0]->setGoal(vec3(ox, oy, startLayer));
+		}else
 		//preform the action of the mouse click 
 		if (multiSelcting) {
 			//std::cout << "multisection is enabled" << std::endl;
