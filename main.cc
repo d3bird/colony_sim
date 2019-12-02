@@ -186,7 +186,7 @@ extern "C" void reshape(int width, int height){
 extern "C" void motion(int xpos, int ypos)
 {
 	cam->motion(xpos, ypos);
-	w1->shawdowSelect(ypos, xpos);
+	//w1->shawdowSelect(ypos, xpos);
 	glutPostRedisplay();
 }
 
