@@ -59,20 +59,7 @@ void creature::update() {
 
 void creature::pathFiding() {
 
-	//if (newGoal) {
-
-	//	if (loc.x != goal.x) {
-	//		if (loc.x > goal.x) {
-	//			loc.x -= movespeed;
-	//		}
-	//		else {
-	//			loc.x += movespeed;
-	//		}
-	//	}
-	//	else {
-
-
-	//	}
+	//std::cout << goal.z << " " << loc.z << std::endl;
 
 	vec2 dir = vec2(goal.x - loc.x, goal.z - loc.z);
 	//  if (length(dir)==0.0) {
@@ -91,6 +78,14 @@ void creature::pathFiding() {
 		else {
 			loc.x -= dir.x;
 		}
+
+		if (loc.z < goal.z) {
+			loc.z += dir.y;
+		}
+		else {
+			loc.z -= dir.y;
+		}
+
 	}
 	else {
 		loc.x = goal.x;
@@ -119,8 +114,10 @@ void creature::setLoc(vec3 i) {
 }
 
 void creature::setGoal(vec3 i) {
-	std::cout << "goal was to: " << goal.z << " " << goal.y << " " << goal.x << std::endl;
-	goal = i;
+	std::cout << "goal was to z: " << goal.z << " y: " << goal.y << " x: " << goal.x << std::endl;
+	goal.x = i.x;
+	goal.y = i.y;
+	goal.z = i.z;
 	std::cout << "goal changed to: " << goal.z << " " << goal.y << " " << goal.x << std::endl;
 	newGoal = true;
 }
