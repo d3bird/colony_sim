@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <cstdio>
+#include <queue>
 
 typedef Angel::vec4  point4;
 typedef Angel::vec4  color4;
@@ -26,6 +27,8 @@ public:
 	void setLoc(vec3 i);
 
 	void setGoal(vec3 i);
+
+	void addLocToQue(vec3 i);
 
 	void colorcube();
 	void MyQuad(int a, int b, int c, int d);
@@ -94,5 +97,7 @@ private:
 	//everything to do with path finding
 	bool newGoal;
 	double destOffset;
+	std::queue<vec3> travelingPoints;
+
 };
 

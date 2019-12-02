@@ -289,7 +289,7 @@ void world::processSelection(unsigned char PixelColor[], int btn) {
 		//set destination for action
 		if (direction) {
 			map[startLayer][oy][ox].setselected(true);
-			Creatures[0]->setGoal(vec3(ox, startLayer, oy));
+			Creatures[0]->addLocToQue(vec3(ox, startLayer, oy));
 		}else
 		//preform the action of the mouse click 
 		if (multiSelcting) {

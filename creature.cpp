@@ -50,10 +50,12 @@ void creature::draw(bool i) {
 }
 
 void creature::update() {
-	pathFiding();
-	tloc = Translate(loc.x * gridOfset, loc.y * gridOfset, loc.z * gridOfset);
-	model_veiw_base = tloc * ctm;
-	glUniformMatrix4fv(trans, 1, GL_TRUE, (model_veiw_base));
+	if (newGoal) {
+		pathFiding();
+		tloc = Translate(loc.x * gridOfset, loc.y * gridOfset, loc.z * gridOfset);
+		model_veiw_base = tloc * ctm;
+		glUniformMatrix4fv(trans, 1, GL_TRUE, (model_veiw_base));
+	}
 }
 
 
@@ -68,8 +70,6 @@ void creature::pathFiding() {
 	if (std::sqrt(dot(dir, dir)) > 0.01) {
 		dir = (compute_time()) * movespeed; //* normalize(dir);
 		// Update location
-
-
 
 		//loc.x += dir.x;
 		if (loc.x < goal.x) {
@@ -88,14 +88,35 @@ void creature::pathFiding() {
 
 	}
 	else {
+		//rests the location
 		loc.x = goal.x;
 		loc.z = goal.z;
+		//grabs the next location off of the queue
+		if (travelingPoints.empty()) {
+			newGoal = false;
+		}
+		else {
+			vec3 temp = travelingPoints.front();
+			travelingPoints.pop();
+			goal = temp;
+			newGoal = true;
+		}
 	}
 	set_last_time();
 
 }
 	
+void creature::addLocToQue(vec3 i) {
 
+	if (!newGoal) {
+		newGoal = true;
+		setGoal(i);
+		set_last_time();
+	}
+	else {
+		travelingPoints.push(i);
+	}
+}
 
 void creature::init() {
 	colorcube();
