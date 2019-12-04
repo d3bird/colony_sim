@@ -7,7 +7,7 @@ typedef Angel::vec4  color4;
 
 //******************************************************************
 //                                                                  
-//  Class: chair
+//  Class: cube
 //                                                                  
 //  Purpose:  holds the information to draw a chair at a given point 
 //            
@@ -49,8 +49,8 @@ public:
 	bool isselected() { return selected; }
 	void setselected(bool i) { selected = i; }
 
-	
-
+	void setAir() { air = true; }
+	bool isAir() { return air; }
 	//old code
 	void updateVeiwer(vec4 i) { viewer = i; }
 	void updateLightPos(point4 i) { light_position = i; }
@@ -60,7 +60,7 @@ public:
 private:
 
 	bool vissible;
-
+	bool air;
 	vec4 product(vec4 a, vec4 b) {
 		return vec4(a[0] * b[0], a[1] * b[1], a[2] * b[2], a[3] * b[3]);
 	}

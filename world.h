@@ -70,6 +70,7 @@ private:
 	void multiselect(int yi, int xi);
 	void clearArea();
 	
+	void reveale(int f, int y, int x);
 
 	float height;//the total height of the world
 	float ywidth;// the total width of the world
@@ -99,7 +100,7 @@ private:
 	color4** selection;// the colors for selection
 	tree* trees;
 	std::vector<tree*>* treeList;// the trees are based on layers on wich they are grown
-	std::vector<creature*> Creatures;
+	std::vector<colonist*> colonists;
 	GLuint trans, coloring;
 
 	int win_h;

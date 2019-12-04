@@ -136,7 +136,7 @@ void world::init() {
 	beast->setLoc(loc);
 	beast->init();
 	//beast->Cinit();
-	Creatures.push_back(beast);
+	colonists.push_back(beast);
 
 }
 
@@ -164,7 +164,7 @@ void world::draw(){
 	for (int f = startLayer; f < drawlength; f++) {
 		for (int y = 0; y < ywidth; y++) {
 			for (int x = 0; x < xwidth; x++) {
-				if (map[f][y][x].isvissible()|| (drawhidden && f == startLayer)) {
+				if ((map[f][y][x].isvissible() || (drawhidden && f == startLayer))&& !map[f][y][x].isAir()) {
 					if (!debug) {
 						map[f][y][x].draw(gridlines);
 					}
@@ -176,6 +176,9 @@ void world::draw(){
 					}
 					
 				}
+				else if (map[f][y][x].isAir() && f+1 < height) {
+					map[f+1][y][x].draw(gridlines);
+				}
 			}
 		}
 		if (treeList[f].size() != 0 && f == startLayer) {
@@ -185,9 +188,9 @@ void world::draw(){
 		}
 	}
 	//draw each of the creatures
-	for (int i = 0; i < Creatures.size(); i++) {
-		if (Creatures[i]->getLevel() == startLayer) {
-			Creatures[i]->draw();
+	for (int i = 0; i < colonists.size(); i++) {
+		if (colonists[i]->getLevel() == startLayer) {
+			colonists[i]->draw();
 		}
 	}
 
@@ -195,9 +198,9 @@ void world::draw(){
 }
 
 void world::update(){
-	for (int i = 0; i < Creatures.size(); i++) {
+	for (int i = 0; i < colonists.size(); i++) {
 		//std::cout << "asd" << std::endl;
-		Creatures[i]->update();
+		colonists[i]->update();
 	}
 }
 
@@ -289,7 +292,13 @@ void world::processSelection(unsigned char PixelColor[], int btn) {
 		//set destination for action
 		if (direction) {
 			map[startLayer][oy][ox].setselected(true);
-			Creatures[0]->addLocToQue(vec3(ox, startLayer, oy));
+			colonists[0]->addLocToQue(vec3(ox, startLayer, oy));
+		}
+		else if (mining) {
+			//map[startLayer][oy][ox].setselected(true);
+			map[startLayer][oy][ox].setAir();
+			reveale(startLayer, oy, ox);
+			colonists[0]->setTask(1,vec3(ox, startLayer, oy));
 		}else
 		//preform the action of the mouse click 
 		if (multiSelcting) {
@@ -504,3 +513,39 @@ bool world::cmpcolor4(unsigned char colora[], vec3 colorb)
 		          (colora[2] == int(colorb.z * 255 - 0.5) || colora[2] == int(colorb.z * 255 + 0.5)));
 }
 
+void world::reveale(int f, int y, int x) {
+
+	if (f == 0) {
+		map[f + 1][y][x].setvissible(true);
+	}
+	else if (f == height) {
+		map[f - 1][y][x].setvissible(true);
+	}
+	else {
+		map[f - 1][y][x].setvissible(true);
+		map[f + 1][y][x].setvissible(true);
+	}
+
+	if (x == 0) {
+		map[f][y][x + 1].setvissible(true);
+	}
+	else if (x == xwidth) {
+		map[f][y][x - 1].setvissible(true);
+	}
+	else {
+		map[f][y][x - 1].setvissible(true);
+		map[f][y][x + 1].setvissible(true);
+	}
+
+	if (y == 0) {
+		map[f][y + 1][x].setvissible(true);
+	}
+	else if (y == ywidth) {
+		map[f][y - 1][x].setvissible(true);
+	}
+	else {
+		map[f][y - 1][x].setvissible(true);
+		map[f][y + 1][x].setvissible(true);
+	}
+
+}
