@@ -487,6 +487,8 @@ int main(int argc, char** argv) {
 	init();
 	myinit();
 	glEnable(GL_DEPTH_TEST);
+	std::cout << "openGL version " <<glGetString(GL_VERSION) << std::endl;
+	std::cout <<"glut version "<< glutGet(GLUT_VERSION) << std::endl;
 	glutMainLoop();
 	return(EXIT_SUCCESS);
 }

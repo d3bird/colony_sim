@@ -16,6 +16,7 @@ void colonist::update() {
 //preform the following task i at location il
 void colonist::setTask(int i, vec3 il) {
 	task = i;
+	idle = false;
 	createPathTo(il);
 }
 

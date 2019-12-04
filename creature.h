@@ -15,7 +15,7 @@ public:
 
 	void draw();
 	void draw(bool i);
-	void update();
+	bool update();//returns true if it has reached the destination
 
 	void init();
 
@@ -91,7 +91,7 @@ private:
 
 	//if the cube needs to recalulate a matrix
 	bool changed;
-
+	bool arivived;
 	bool selected;
 
 	//timing

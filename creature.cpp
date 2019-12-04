@@ -36,6 +36,7 @@ creature::creature() {
 	movespeed = 0.001;
 	destOffset = 0.02;
 	newGoal = false;
+	arivived = true;
 }
 
 void creature::draw() {
@@ -49,13 +50,15 @@ void creature::draw(bool i) {
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
 }
 
-void creature::update() {
+bool creature::update() {
 	if (newGoal) {
 		pathFiding();
 		tloc = Translate(loc.x * gridOfset, loc.y * gridOfset, loc.z * gridOfset);
 		model_veiw_base = tloc * ctm;
 		glUniformMatrix4fv(trans, 1, GL_TRUE, (model_veiw_base));
 	}
+	return arivived;
+
 }
 
 //create the path to the point given
@@ -101,12 +104,14 @@ void creature::pathFiding() {
 		//grabs the next location off of the queue
 		if (travelingPoints.empty()) {
 			newGoal = false;
+			arivived = true;
 		}
 		else {
 			vec3 temp = travelingPoints.front();
 			travelingPoints.pop();
 			goal = temp;
 			newGoal = true;
+			arivived = false;
 		}
 	}
 	set_last_time();
@@ -117,6 +122,7 @@ void creature::addLocToQue(vec3 i) {
 
 	if (!newGoal) {
 		newGoal = true;
+		arivived = false;
 		setGoal(i);
 		set_last_time();
 	}
