@@ -27,14 +27,16 @@ public:
 	void setLoc(vec3 i);
 
 	void setGoal(vec3 i);
-
+	void createPathTo(vec3 i);
 	void addLocToQue(vec3 i);
 
 	void colorcube();
 	void MyQuad(int a, int b, int c, int d);
 
 	void updateAngle(float i[3]) { theta[0] = i[0]; theta[1] = i[1]; theta[2] = i[2]; }
+	int getLevel() { return loc.y-1; }
 
+	void setDefColor(color4 i) { defColor = i; }
 
 	// Update the last updated time to now.
 	void set_last_time();
@@ -48,6 +50,8 @@ public:
 private:
 
 	void pathFiding();
+
+
 
 	//const values
 	double gridOfset = 0.27;

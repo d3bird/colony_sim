@@ -58,7 +58,14 @@ void creature::update() {
 	}
 }
 
+//create the path to the point given
+//for now it just adds it to the que, going stright to the point
+void creature::createPathTo(vec3 i) {
+	addLocToQue(i);
 
+}
+
+//this function moves the creature through the queued up locations
 void creature::pathFiding() {
 
 	//std::cout << goal.z << " " << loc.z << std::endl;

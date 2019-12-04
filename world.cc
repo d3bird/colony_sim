@@ -60,8 +60,6 @@ world::world() {
 }
 
 
-
-
 world::~world(){
 	for (int f = 0; f < height; f++) {
 		for (int y = 0; y < ywidth; y++) {
@@ -130,13 +128,14 @@ void world::init() {
 	 }
 	treeList[temp].push_back(trees);
 
-	creature *beast;
-	beast = new creature();
+	colonist*beast;
+	beast = new colonist();
 	loc = vec3(1, 1, 12);
 	beast->setColorloc(coloring);
 	beast->setModelVeiw(trans);
 	beast->setLoc(loc);
 	beast->init();
+	//beast->Cinit();
 	Creatures.push_back(beast);
 
 }
@@ -187,8 +186,9 @@ void world::draw(){
 	}
 	//draw each of the creatures
 	for (int i = 0; i < Creatures.size(); i++) {
-		//std::cout << "asd" << std::endl;
-		Creatures[i]->draw();
+		if (Creatures[i]->getLevel() == startLayer) {
+			Creatures[i]->draw();
+		}
 	}
 
 	//trees->draw(gridlines);

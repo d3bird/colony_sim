@@ -153,6 +153,7 @@ bool testcube = true;
 bool game = true;
 bool controler = false;
 bool drawHud = false;
+
 //pointers for objects to draw
 camera* cam;
 cube* baseCube;
@@ -360,10 +361,10 @@ extern "C" void mykey(unsigned char key, int mousex, int mousey) {
 		w1->setMultiselecct();
 		break;
 	case '3':
-		w1->setDestination();
+		w1->toggleDestination();
 		break;
 	case '4':
-		w1->setMining();
+		w1->toggleMining();
 		break;
 	case '5':
 		

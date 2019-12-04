@@ -1,15 +1,15 @@
 //******************************************************************
 //                                                                  
-//  Class: room1
+//  Class: world
 //                                                                  
-//  Purpose:  hold the information to generate the first room and 
-//            the differnt objects that it contains
+//  Purpose:   
+//           
 //            
 //  Functions:
 //             draw()               //draws the room and its objects
 //             update()             //updated the objects in the room
-//             isCollission()       // determin if the player is out of bounds
-//             foundSpecial()       // determin if the interaction hit a special object
+//             ()       // 
+//             ()       // 
 //******************************************************************
 #pragma once
 
@@ -19,6 +19,7 @@
 #include "cube.h"
 #include "tree.h"
 #include "creature.h"
+#include "colonist.h"
 #include <vector>
 
 typedef Angel::vec4  point4;
@@ -56,8 +57,8 @@ public:
 	void setMultiselecct() { multiSelcting = true; }
 	void shawdowSelect(int yi, int xi);
 
-	void setDestination() { direction = true; }
-	void setMining() { mining = true; }
+	void toggleDestination() { direction = !direction; }
+	void toggleMining() { mining = !mining; }
 private:
 	
 	void processSelection(unsigned char PixelColor[], int btn);
