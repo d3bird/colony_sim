@@ -37,13 +37,18 @@ public:
 	void setModelVeiw(GLuint i) { trans = i; }
 	void setColorloc(GLuint i) { coloring = i; }
 	void setindex(int i) { placeIndex = i; }
+	int getIndex() { return placeIndex; }
 
 	void calTranMat();
 	void setLoc(vec3 i);
+	mat4 getModelVeiw() { return model_veiw_base; }
+	color4 getColor() { return currentc; }
+	point4* getPointsArray() { return points; }
+	void calTranMat_noSend();
 
 	int getHeight() { return  length; }
 
-	void setColor(color4 i) { material_diffuse = i; colorcube(); changed = true; }
+	void setColor(color4 i) { material_diffuse = i; currentc = i; colorcube(); changed = true; }
 
 
 	bool isselected() { return selected; }
@@ -56,6 +61,7 @@ public:
 	void updateLightPos(point4 i) { light_position = i; }
 	bool isvissible() { return vissible; }
 	void setvissible(bool i) { vissible = i; }
+
 
 private:
 
@@ -87,7 +93,7 @@ private:
 
 	//selected color
 	color4 Scolor;
-
+	color4 currentc;
 	//rotation angles for lighting
 	float theta[3];
 

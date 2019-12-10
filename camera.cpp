@@ -1,5 +1,5 @@
 #include "camera.h"
-#include <Xinput.h>
+
 
 
 typedef Angel::vec4  point4;
@@ -255,7 +255,7 @@ void camera::reshape(int width, int height) {
 		bottom /= aspect;
 	}
 
-	mat4 projection = Perspective(camera_angle, aspect, zNear, zFar);
+	 projection = Perspective(camera_angle, aspect, zNear, zFar);
 
 	// Can use either perspective or ortho projection.
 	 // mat4 projection = Ortho(left, right, bottom, top, zNear, zFar);

@@ -24,6 +24,7 @@ public:
 	//set the locations for the shader vars
 	void setProjection(GLuint i) { Projection = i; }
 	void setModelveiw(GLuint i) { Modelview = i; }
+	void setVAO1(GLuint i) { vao1 = i; }//not used yet
 
 	//functions for the movement of the cam
 	void Setmforward() { mforward = true; }
@@ -34,6 +35,12 @@ public:
 	void Setmdown() { mdown = true; }
 
 	bool getGrids() { return grids; }
+
+	mat4 getProjection() { return  projection; }
+
+	void setWorldgenShaderProj(GLuint i) { Projection2 = i; }
+	void setWorldgenShaderModel(GLuint i) { Modelview2 = i; }
+	void setVAO2(GLuint i) { vao2 = i; }//not used yet
 
 private:
 
@@ -89,8 +96,15 @@ private:
 	GLfloat top;
 	GLfloat bottom;
 
+	//for the main shader
 	GLuint Projection;
 	GLuint Modelview;
+	GLuint vao1;
+	mat4 projection;
+	//for the worldgen shader
+	GLuint Projection2;
+	GLuint Modelview2;
+	GLuint vao2;
 
 	bool invert_con_look;
 
