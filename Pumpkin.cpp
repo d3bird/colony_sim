@@ -89,8 +89,7 @@ void Pumpkin::calTranMat() {
 
 	fruit = Translate((loc.x * gridOfset)+ 0.1, (loc.y * gridOfset), (loc.z * gridOfset)) * ctm * Scale(fruit_scale, fruit_scale, fruit_scale);
 
-	glUniformMatrix4fv(trans, 1, GL_TRUE, (model_veiw_base));
-	glUniform4f(coloring, material_diffuse.x, material_diffuse.y, material_diffuse.z, material_diffuse.w);
+
 }
 
 void Pumpkin::calcOutlinesmats() {
@@ -151,7 +150,18 @@ void Pumpkin::draw(bool i) {
 
 //draw with the selected color
 void Pumpkin::drawSelec(color4 i) {
+	calTranMat();
+	//std::cout << i.x<< " " << i.y << " " << i.z << " " << i.w << std::endl;
+	glUniform4f(coloring, i.x, i.y, i.z, i.w);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+	glUniformMatrix4fv(trans, 1, GL_TRUE, (stemBase));
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glUniformMatrix4fv(trans, 1, GL_TRUE, (stemuppre));
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+
+	glUniformMatrix4fv(trans, 1, GL_TRUE, (fruit));
+	glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
 void Pumpkin::update() {

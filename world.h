@@ -105,6 +105,9 @@ private:
 	std::vector<colonist*> colonists;
 	std::vector<Pumpkin*> pumpkins;
 
+	int MaxPlants;
+	color4* plantSelection;
+
 	GLuint trans, coloring;
 
 	int win_h;

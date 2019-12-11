@@ -44,8 +44,22 @@ world::world() {
 			selection[yi][xi].w = 1;
 			//selection[yi][xi] = color4(xi / 255, yi / 255, 0.0, 1.0);
 			//std::cout << temp * 255 + 0.5 << " " << selection[yi][xi].y * 255 + 0.5 << " " << selection[yi][xi].z * 255 + 0.5 << std::endl;
+			//std::cout << selection[yi][xi].x << std::endl;
 		}
 	}
+
+	//these are for the edible plants
+	MaxPlants = 20;
+	plantSelection = new color4[MaxPlants];
+	//std::cout << std::endl;
+	for (int i = 1; i < MaxPlants; i++) {
+		plantSelection[i].x = 0;
+		plantSelection[i].y = 0;
+		plantSelection[i].z = ((float)i) / ((float)MaxPlants);
+		plantSelection[i].w = 1;
+		std::cout << plantSelection[i].z << std::endl;
+	}
+
 
 	//creating the trees
 	trees = new tree();
@@ -57,6 +71,7 @@ world::world() {
 	multiSelcting = false;
 	firstPoint = false;
 	point2init = false;
+
 }
 
 
@@ -144,6 +159,26 @@ void world::init() {
 	pum->setColorloc(coloring);
 	pum->setModelVeiw(trans);
 	pum->setLoc(loc);
+	pum->setindex(1);
+	pum->init();
+
+	pumpkins.push_back(pum);
+
+	pum = new Pumpkin();
+	loc = vec3(5, 1, 12);
+	pum->setColorloc(coloring);
+	pum->setModelVeiw(trans);
+	pum->setLoc(loc);
+	pum->setindex(2);
+	pum->init();
+
+	pumpkins.push_back(pum);
+	pum = new Pumpkin();
+	loc = vec3(6, 1, 12);
+	pum->setColorloc(coloring);
+	pum->setModelVeiw(trans);
+	pum->setLoc(loc);
+	pum->setindex(3);
 	pum->init();
 
 	pumpkins.push_back(pum);
@@ -197,7 +232,13 @@ void world::draw(){
 		}
 		if (f == 0 && pumpkins.size() != 0) {
 			for (int i = 0; i < pumpkins.size(); i++) {
-				pumpkins[i]->draw(gridlines);
+				if (debug) {
+					color4 temp = plantSelection[i+1];
+					//color4 temp = color4(0.0, 0.0, 1.0, 1.0);
+					pumpkins[i]->drawSelec(temp);
+				}else{
+					pumpkins[i]->draw(gridlines);
+				}
 			}
 		}
 	}
@@ -238,10 +279,17 @@ void world::proccessMouse(int btn, int state, int x, int y) {
 				//needed to debug selection
 				color4 temp = selection[y][x];
 				map[startLayer][y][x].drawSelec(temp);
-
 			}
 		}
 
+		if (startLayer == 0) {
+			for (int i = 0; i < pumpkins.size(); i++) {
+				color4 temp = plantSelection[i+1];
+				//color4 temp = color4(0.0, 0.0, 1.0, 1.0);
+				//std::cout << plantSelection[i].z << " "<< plantSelection[i].w<<std::endl;
+				pumpkins[i]->drawSelec(temp);
+			}
+		}
 
 		// Flush ensures all commands have drawn
 		glFlush();
@@ -274,6 +322,26 @@ void world::processSelection(unsigned char PixelColor[], int btn) {
 	if (PixelColor[1] == 255) {
 		std::cout << "not on the map" << std::endl;
 		return;
+	}
+	else if (PixelColor[2] != 0) {
+		vec3 colorb = vec3(plantSelection[0].x, plantSelection[0].y, plantSelection[0].z);
+		std::cout << "found a plant number: ";
+		int plant = -1;
+		//std::cout << (int)PixelColor[0] << " " << (int)PixelColor[1] << " " << (int)PixelColor[2] << std::endl;
+		for (int i = 1; i < MaxPlants; i++) {
+			colorb.z = plantSelection[i].z;
+			//std::cout << int(colorb.z * 255 - 0.5) << " " << (int(colorb.z * 255 + 0.5)) << std::endl;
+			if ((PixelColor[2] == int(colorb.z * 255 - 0.5)) || (PixelColor[2] == int(colorb.z * 255 + 0.5))) {
+				plant = i;
+				break;
+			}
+		}
+		if (plant == -1) {
+			std::cout << "not found" << std::endl;
+		}
+		else {
+			std::cout << plant << std::endl;
+		}
 	}
 	else {
 		int ox =-1;

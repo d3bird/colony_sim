@@ -296,10 +296,10 @@ extern "C" void mykey(unsigned char key, int mousex, int mousey) {
 		break;
 
 	case 'o':
-		tesplant->enlargeFruit();
+		//tesplant->enlargeFruit();
 		break;
 	case 'l':
-		tesplant->decreaseFruit();
+		//tesplant->decreaseFruit();
 		break;
 
 	case 'H':
