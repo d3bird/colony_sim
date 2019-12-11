@@ -71,7 +71,7 @@ world::world() {
 	multiSelcting = false;
 	firstPoint = false;
 	point2init = false;
-
+	harvest = false;
 
 	x = -1;
 	y = -1;
@@ -258,10 +258,18 @@ void world::draw(){
 }
 
 void world::update(){
-	for (int i = 0; i < colonists.size(); i++) {
-		//std::cout << "asd" << std::endl;
-		colonists[i]->update();
+	//show the joblist
+	if (jobs.size() != 0) {
+		printJobs();
 	}
+
+	//update the job list
+	assignJobs();
+	//check the jobs in progress and update the colonists
+	checkJobs();
+
+	//update the animations
+
 	for (int i = 0; i < pumpkins.size(); i++) {
 		pumpkins[i]->update();
 	}
@@ -346,15 +354,29 @@ void world::processSelection(unsigned char PixelColor[], int btn) {
 		}
 		else {
 			std::cout << plant << std::endl;
-			if (lplant != -1) {
-				pumpkins[lplant]->setselected(false);
-			}
-			pumpkins[plant - 1]->setselected(true);
-			lplant = plant - 1;
 
-			if (x != -1) {
-				map[x][y][z].setselected(false);
-				x = -1;
+
+			if (harvest) {
+				job add;
+				add.jobtype = 1;
+				add.loc = pumpkins[plant - 1]->getLoc();
+				add.mloc = pumpkins[plant - 1]->getLoc();
+				add.colinistID = -1;
+				addJobToQue(add);
+				pumpkins[plant - 1]->setselected(true);
+			}
+			else {
+				if (lplant != -1) {
+					pumpkins[lplant]->setselected(false);
+				}
+				pumpkins[plant - 1]->setselected(true);
+				lplant = plant - 1;
+
+				if (x != -1) {
+					map[x][y][z].setselected(false);
+					x = -1;
+				}
+
 			}
 
 		}
@@ -394,10 +416,10 @@ void world::processSelection(unsigned char PixelColor[], int btn) {
 		if (direction) {
 			map[startLayer][oy][ox].setselected(true);
 			if (colonists[0]->isIdle()) {
-				colonists[0]->setTask(1, vec3(ox, startLayer, oy));
+				colonists[0]->setTask(0, vec3(ox, startLayer, oy));
 			}
 			else {
-				colonists[0]->setTask(1,vec3(ox, startLayer, oy));
+				colonists[0]->setTask(0,vec3(ox, startLayer, oy));
 			}
 		}
 		else if (mining) {
@@ -579,7 +601,6 @@ void world::clearArea() {
 }
 
 
-
 void world::shawdowSelect(int yi, int xi) {
 	if (multiSelcting && firstPoint) {
 		
@@ -588,18 +609,18 @@ void world::shawdowSelect(int yi, int xi) {
 			pointTwo.x = startLayer;
 			pointTwo.y = yi;
 			pointTwo.z = xi;
-			point2init = true;
+point2init = true;
 		}
 		else {
-				//clearArea();
-				proccessMouse(0, GLUT_DOWN, xi, yi);
-				firstPoint = true;
-				multiSelcting = true;
-				//map[startLayer][(int)pointTwo.y][(int)pointTwo.z].setselected(false);
-				//pointTwo.y = yi;
-				//pointTwo.z = xi;
-				//map[startLayer][yi][xi].setselected(true);
-			
+		//clearArea();
+		proccessMouse(0, GLUT_DOWN, xi, yi);
+		firstPoint = true;
+		multiSelcting = true;
+		//map[startLayer][(int)pointTwo.y][(int)pointTwo.z].setselected(false);
+		//pointTwo.y = yi;
+		//pointTwo.z = xi;
+		//map[startLayer][yi][xi].setselected(true);
+
 		}
 	}
 }
@@ -618,20 +639,18 @@ bool world::cmpcolor2(unsigned char colora[], vec3 colorb)
 		(colora[2] == int(colorb.z * 255 - 0.5)));
 }
 
-
 bool world::cmpcolor3(unsigned char colora[], vec3 colorb)
 {
-	return((colora[0] == int(colorb.x * 255 )) &&
-		(colora[1] == int(colorb.y * 255 )) &&
-		(colora[2] == int(colorb.z * 255 )));
+	return((colora[0] == int(colorb.x * 255)) &&
+		(colora[1] == int(colorb.y * 255)) &&
+		(colora[2] == int(colorb.z * 255)));
 }
-
 
 bool world::cmpcolor4(unsigned char colora[], vec3 colorb)
 {
-		return (  ((colora[0] == int(colorb.x * 255 - 0.5)) || (colora[0] == int(colorb.x * 255 + 0.5) )) &&
-			      ((colora[1] == int(colorb.y * 255 - 0.5)) || (colora[1] == int(colorb.y * 255 + 0.5))) &&
-		          (colora[2] == int(colorb.z * 255 - 0.5) || colora[2] == int(colorb.z * 255 + 0.5)));
+	return (((colora[0] == int(colorb.x * 255 - 0.5)) || (colora[0] == int(colorb.x * 255 + 0.5))) &&
+		((colora[1] == int(colorb.y * 255 - 0.5)) || (colora[1] == int(colorb.y * 255 + 0.5))) &&
+		(colora[2] == int(colorb.z * 255 - 0.5) || colora[2] == int(colorb.z * 255 + 0.5)));
 }
 
 void world::reveale(int f, int y, int x) {
@@ -669,4 +688,95 @@ void world::reveale(int f, int y, int x) {
 		map[f][y + 1][x].setvissible(true);
 	}
 
+}
+
+void world::addJobToQue(job i) {
+	jobs.push_back(i);
+}
+
+//if a job is compleated then this will execute the job and remove it from the list
+void world::compleatJob(int i) {
+	if (i < 0 || i >= jobs.size()) {
+		std::cout << "could not compleate job, it was out of bounds of job list" << std::endl;
+	}
+	else {
+		std::cout << "compleating a job" << std::endl;
+		int xi = jobs[i].loc.x;
+		int yi = jobs[i].loc.y;
+		int zi = jobs[i].loc.z;
+		vec3 temp = jobs[i].loc;
+
+		switch (jobs[i].jobtype)
+		{
+		case 1://harvesting
+	
+			//jobs.erase(jobs.begin() + i);// remove the job
+
+			for (int i = 0; i < pumpkins.size(); i++) {
+				if (pumpkins[i]->getLoc() == temp) {
+					
+					pumpkins[i]->setselected(false);
+					pumpkins[i]->harvest();
+					break;
+				}
+			}
+			std::cout << "could not connect plant to job" << std::endl;
+			break;
+
+		default:
+			break;
+		}
+
+	}
+}
+
+void world::assignJobs() {
+	for (int q = 0; q < jobs.size(); q++) {
+		if (jobs[q].colinistID == -1) {
+			for (int i = 0; i < colonists.size(); i++) {
+				if (colonists[i]->isIdle()) {
+					jobs[q].colinistID = i;
+					colonists[i]->setTask(jobs[q].jobtype, jobs[q].mloc);
+				}
+			}
+		}
+	}
+
+}
+
+void world::checkJobs() {
+	job temp;
+	bool arrived;
+	for (int i = 0; i < colonists.size(); i++) {
+		
+		arrived = colonists[i]->update();
+
+		if (arrived) {
+			for (int q = 0; q < jobs.size(); q++) {
+				if (i == jobs[q].colinistID) {
+					compleatJob(q);
+					temp = jobs[jobs.size() - 1];
+					jobs[jobs.size() - 1] = jobs[q];
+					jobs[q] = temp;
+					jobs.pop_back();
+					q--;
+				}
+			}
+		}
+
+	}
+
+
+}
+
+//print out the list of jobs 
+//for debugging purposes
+void world::printJobs() {
+	for (int i = 0; i < jobs.size(); i++) {
+		std::cout << std::endl;
+		std::cout <<"job number "<< i<<  std::endl;
+		std::cout << "colinstID " << jobs[i].colinistID << std::endl;
+		std::cout << "jobtype " << jobs[i].jobtype << std::endl;
+		std::cout << std::endl;
+	}
 }

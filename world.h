@@ -21,11 +21,19 @@
 #include "creature.h"
 #include "colonist.h"
 #include "Pumpkin.h"
-#include <vector>
+
 
 typedef Angel::vec4  point4;
 typedef Angel::vec4  color4;
 
+struct job {
+
+	int colinistID; //if == to -1 then no one is working on it
+	vec3 loc; //were the job is located
+	vec3 mloc; //the location to move to do the job
+	int jobtype;
+
+};
 
 class world{
 public:
@@ -58,8 +66,17 @@ public:
 	void setMultiselecct() { multiSelcting = true; }
 	void shawdowSelect(int yi, int xi);
 
-	void toggleDestination() { direction = !direction; }
-	void toggleMining() { mining = !mining; }
+	void addJobToQue(job i);
+	void compleatJob(int i);
+	void checkJobs();
+	void assignJobs();
+
+	void toggleDestination() { direction = !direction; mining = false;}
+	void toggleMining() { mining = !mining; direction = false; }
+	void toggleHarvesting() { harvest = !harvest; direction = false; mining = false; }
+
+	void printJobs();
+	
 private:
 	
 	void processSelection(unsigned char PixelColor[], int btn);
@@ -126,4 +143,6 @@ private:
 	bool direction;
 	bool mining;
 	bool harvest;
+
+	std::vector<job> jobs;
 };

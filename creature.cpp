@@ -74,7 +74,7 @@ void creature::createPathTo(vec3 i, bool add) {
 		for (int i = 0; i < travelingPoints.size(); i++) {
 			travelingPoints.pop();
 		}
-		std::cout << "clearing moving points" << std::endl;
+		//std::cout << "clearing moving points" << std::endl;
 		goal.x = loc.x;
 		goal.y = loc.y;
 		goal.z = loc.z;
@@ -164,11 +164,11 @@ void creature::setLoc(vec3 i) {
 }
 
 void creature::setGoal(vec3 i) {
-	std::cout << "goal was to z: " << goal.z << " y: " << goal.y << " x: " << goal.x << std::endl;
+	//std::cout << "goal was to z: " << goal.z << " y: " << goal.y << " x: " << goal.x << std::endl;
 	goal.x = i.x;
 	goal.y = i.y;
 	goal.z = i.z;
-	std::cout << "goal changed to: " << goal.z << " " << goal.y << " " << goal.x << std::endl;
+	//std::cout << "goal changed to: " << goal.z << " " << goal.y << " " << goal.x << std::endl;
 	newGoal = true;
 }
 

@@ -9,7 +9,7 @@ typedef Angel::vec4  color4;
 //                                                                  
 //  Class: Pumpkin
 //                                                                  
-//  Purpose:  holds the information to draw a chair at a given point 
+//  Purpose:  holds the information to draw a pumpkin plant at a given point 
 //            
 //  Functions:
 //             draw()               //draws the room and its objects
@@ -37,6 +37,7 @@ public:
 
 	void calTranMat();
 	void setLoc(vec3 i);
+	vec3 getLoc() { return loc; }
 	mat4 getModelVeiw() { return model_veiw_base; }
 
 
@@ -108,7 +109,7 @@ private:
 	//locations for the values in the shader
 	GLuint  trans, coloring;
 
-	//location of the cube in the wolrd
+	//location of the plant in the wolrd
 	vec3 loc;
 	//the dimentions of the base cube
 	int scale;

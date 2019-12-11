@@ -270,7 +270,7 @@ extern "C" void mykey(unsigned char key, int mousex, int mousey) {
 		w1->toggleMining();
 		break;
 	case '5':
-
+		w1->toggleHarvesting();
 		break;
 	case '6':
 
