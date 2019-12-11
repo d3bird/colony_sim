@@ -18,6 +18,7 @@
 #include "camera.h"
 #include "output.h"
 #include "hud.h"
+#include "Pumpkin.h"
 #include <iostream>
 
 const int NumVertices = 36; //(6 faces)(2 triangles/face)(3 vertices/triangle)
@@ -49,6 +50,8 @@ bool drawHud = false;
 camera* cam;
 cube* baseCube;
 hud* info;
+Pumpkin* tesplant;
+
 
 world* w1;
 GLuint program, program2;
@@ -95,7 +98,7 @@ void init() {
 
 	glGenBuffers(1, buffers);
 	glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
-	glBufferData(GL_ARRAY_BUFFER, baseCube->get_points_size()+ info->get_points_size()+ baseCube->get_points_size(), NULL, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, (baseCube->get_points_size())+ info->get_points_size()+ baseCube->get_points_size()+ baseCube->get_points_size() + baseCube->get_points_size(), NULL, GL_STATIC_DRAW);
 	std::cout << baseCube->get_points_size() << std::endl;
 	program = InitShader("vshader.glsl", "fshader.glsl");
 	//program2 = InitShader("vTextshader.glsl", "fTextshader.glsl");
@@ -139,15 +142,17 @@ extern "C" void display() {
 	}else{
 		//w1->updatePlayerpos(cameraPos);
 
-			glUseProgram(program);
-			glBindVertexArray(vao);
+		//	glUseProgram(program);
+		//	glBindVertexArray(vao);
 		w1->draw();
-			
+		//baseCube->draw(true);
+		tesplant->draw(true);
+
 		if (drawHud) {
 			glUniform1i(simple, true);
-			glEnable(GL_CULL_FACE);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		//	glEnable(GL_CULL_FACE);
+		//	glEnable(GL_BLEND);
+		//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			//info->RenderText("This is sample text", 25.0f, 25.0f, 1.0f, vec3(0.5, 0.8f, 0.2f));
 			info->draw();
 			//glUseProgram(program);
@@ -201,6 +206,7 @@ void idle() {
 			std::cout << "controller was connected" << std::endl;
 		}
 	}
+	tesplant->update();
 	w1->update();
 	cam->moveCam();
 
@@ -242,6 +248,7 @@ extern "C" void mykey(unsigned char key, int mousex, int mousey) {
 		break;
 	case ' ':
 		cam->Setmup();
+		//tesplant->harvest();
 		break;
 
 	case 'e':
@@ -268,23 +275,38 @@ extern "C" void mykey(unsigned char key, int mousex, int mousey) {
 		w1->toggleMining();
 		break;
 	case '5':
-		
+
 		break;
 	case '6':
-		
+
 		break;
 	case '7':
-		
+
 		break;
 	case '8':
-		
+
 		break;
 	case '9':
-		
+
 		break;
 	case '0':
-		
+
 		break;
+
+	case 'i':
+		tesplant->raisStem();
+		break;
+	case 'k':
+		tesplant->LowerStem();
+		break;
+
+	case 'o':
+		tesplant->enlargeFruit();
+		break;
+	case 'l':
+		tesplant->decreaseFruit();
+		break;
+
 	case 'H':
 	case 'h':
 		w1->setDrawHidden(!w1->drawlinghidden());
@@ -365,6 +387,15 @@ void myinit(){
 	w1->setModelVeiw(Modeltrans);
 	w1->setColorloc(coloring);
 	w1->init();
+
+	tesplant = new Pumpkin();
+	tesplant->setindex(0);
+	tesplant->setLoc(vec3(0, 1, 0));
+	tesplant->setModelVeiw(Modeltrans);
+	tesplant->setColorloc(coloring);
+	
+	tesplant->init();
+
 	std::cout << "done creating objects" << std::endl;
 }
 

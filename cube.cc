@@ -198,7 +198,7 @@ void cube::init() {
 	calTranMat();
 	colorcube();
 	if (placeIndex == 0) {
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(points), points);//old way
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(points), points);
 		//glBufferSubData(GL_ARRAY_BUFFER, sizeof(points), sizeof(quad_color), quad_color);
 	}
 	else {

@@ -101,6 +101,7 @@ private:
 	tree* trees;
 	std::vector<tree*>* treeList;// the trees are based on layers on wich they are grown
 	std::vector<colonist*> colonists;
+
 	GLuint trans, coloring;
 
 	int win_h;
