@@ -72,6 +72,11 @@ world::world() {
 	firstPoint = false;
 	point2init = false;
 
+
+	x = -1;
+	y = -1;
+	z = -1;
+	lplant = -1;
 }
 
 
@@ -341,6 +346,17 @@ void world::processSelection(unsigned char PixelColor[], int btn) {
 		}
 		else {
 			std::cout << plant << std::endl;
+			if (lplant != -1) {
+				pumpkins[lplant]->setselected(false);
+			}
+			pumpkins[plant - 1]->setselected(true);
+			lplant = plant - 1;
+
+			if (x != -1) {
+				map[x][y][z].setselected(false);
+				x = -1;
+			}
+
 		}
 	}
 	else {
@@ -391,6 +407,21 @@ void world::processSelection(unsigned char PixelColor[], int btn) {
 			multiselect(oy, ox);
 		}
 		else {
+
+			//makes it so that only one thing can be selected at a time
+			if (x != -1) {
+				map[x][y][z].setselected(false);
+			}
+
+			if (lplant != -1) {
+				pumpkins[lplant]->setselected(false);
+				lplant = -1;
+			}
+
+			x = startLayer;
+			y = oy;
+			z = ox;
+
 			map[startLayer][oy][ox].setselected(true);
 		}
 

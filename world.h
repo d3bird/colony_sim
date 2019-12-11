@@ -97,6 +97,13 @@ private:
 	vec3 pointOne;
 	vec3 pointTwo;
 
+	//for the last seleceteed location
+	int x;
+	int y;
+	int z;
+	int lplant;
+
+
 	cube*** map;//the map of the whole world
 	color4** selection;// the colors for selection
 	tree* trees;
@@ -118,4 +125,5 @@ private:
 	//everything to do with the command system
 	bool direction;
 	bool mining;
+	bool harvest;
 };

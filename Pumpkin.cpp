@@ -110,20 +110,25 @@ void Pumpkin::draw(bool i) {
 		calTranMat();
 		changed = false;
 	}
-	else {
-		glUniformMatrix4fv(trans, 1, GL_TRUE, (model_veiw_base));
-		glUniform4f(coloring, material_diffuse.x, material_diffuse.y, material_diffuse.z, material_diffuse.w);
+
+	if (selected) {
+		glUniform4f(coloring, Scolor.x, Scolor.y, Scolor.z, Scolor.w);
 	}
-
-
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	glUniform4f(coloring, stemColor.x, stemColor.y, stemColor.z, stemColor.w);
+	else {
+		glUniform4f(coloring, stemColor.x, stemColor.y, stemColor.z, stemColor.w);
+	}
 	glUniformMatrix4fv(trans, 1, GL_TRUE, (stemBase));
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glUniformMatrix4fv(trans, 1, GL_TRUE, (stemuppre));
 	glDrawArrays(GL_TRIANGLES, 0, 36);
-	glUniform4f(coloring, fruitColor.x, fruitColor.y, fruitColor.z, fruitColor.w);
+
+	if (selected) {
+		glUniform4f(coloring, Scolor.x, Scolor.y, Scolor.z, Scolor.w);
+	}
+	else {
+		glUniform4f(coloring, fruitColor.x, fruitColor.y, fruitColor.z, fruitColor.w);
+	}
+
 	glUniformMatrix4fv(trans, 1, GL_TRUE, (fruit));
 	glDrawArrays(GL_TRIANGLES, 0, 36); 
 
@@ -148,7 +153,7 @@ void Pumpkin::draw(bool i) {
 	}
 }
 
-//draw with the selected color
+//draw with a special color
 void Pumpkin::drawSelec(color4 i) {
 	calTranMat();
 	//std::cout << i.x<< " " << i.y << " " << i.z << " " << i.w << std::endl;
