@@ -78,7 +78,9 @@ extern "C" void reshape(int width, int height){
 
 extern "C" void motion(int xpos, int ypos)
 {
-	cam->motion(xpos, ypos);
+	if (!drawHud) {
+		cam->motion(xpos, ypos);
+	}
 	//w1->shawdowSelect(ypos, xpos);
 	glutPostRedisplay();
 }
@@ -161,13 +163,16 @@ extern "C" void display() {
 
 
 extern "C" void mouse(int btn, int state, int xpos, int ypos) {
-	if (game) {
-		w1->proccessMouse(btn, state, xpos, ypos);
-	}else{
+	if (!drawHud) {
+		if (game) {
+			w1->proccessMouse(btn, state, xpos, ypos);
+		}
+		else {
 
-		if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN) axis = 0;
-		if (btn == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN) axis = 1;
-		if (btn == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) axis = 2;
+			if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN) axis = 0;
+			if (btn == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN) axis = 1;
+			if (btn == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) axis = 2;
+		}
 	}
 	glutPostRedisplay();
 }
@@ -178,6 +183,8 @@ void idle() {
 	static int delaytime = 2;
 	static GLint time = glutGet(GLUT_ELAPSED_TIME);
 	GLint deltatime = (glutGet(GLUT_ELAPSED_TIME) - time);
+
+
 
 	if (rotate) {
 		theta[axis] += incr * (deltatime);
