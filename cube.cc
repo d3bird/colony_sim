@@ -61,6 +61,7 @@ cube::cube() {
 	//Scolor = color4(229.0 / 255.0, 148.0 / 255.0, 25.0 / 255.0, 1.0);//golden brown
 
 	air = false;
+	covered = false;
 }
 
 

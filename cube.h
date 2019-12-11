@@ -56,6 +56,10 @@ public:
 
 	void setAir() { air = true; }
 	bool isAir() { return air; }
+
+	bool SomethingOntop() { return covered; }
+	void setSomethingOnTop(bool i) { covered = i; }
+
 	//old code
 	void updateVeiwer(vec4 i) { viewer = i; }
 	void updateLightPos(point4 i) { light_position = i; }
@@ -64,7 +68,7 @@ public:
 
 
 private:
-
+	bool covered;
 	bool vissible;
 	bool air;
 	vec4 product(vec4 a, vec4 b) {
