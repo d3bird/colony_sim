@@ -138,6 +138,15 @@ void world::init() {
 	//beast->Cinit();
 	colonists.push_back(beast);
 
+	Pumpkin* pum;
+	pum = new Pumpkin();
+	loc = vec3(4, 1, 12);
+	pum->setColorloc(coloring);
+	pum->setModelVeiw(trans);
+	pum->setLoc(loc);
+	pum->init();
+
+	pumpkins.push_back(pum);
 }
 
 void world::increaseLayer() {
@@ -186,6 +195,11 @@ void world::draw(){
 				treeList[f][i]->draw(gridlines);
 			}
 		}
+		if (f == 0 && pumpkins.size() != 0) {
+			for (int i = 0; i < pumpkins.size(); i++) {
+				pumpkins[i]->draw(gridlines);
+			}
+		}
 	}
 	//draw each of the creatures
 	for (int i = 0; i < colonists.size(); i++) {
@@ -201,6 +215,9 @@ void world::update(){
 	for (int i = 0; i < colonists.size(); i++) {
 		//std::cout << "asd" << std::endl;
 		colonists[i]->update();
+	}
+	for (int i = 0; i < pumpkins.size(); i++) {
+		pumpkins[i]->update();
 	}
 }
 

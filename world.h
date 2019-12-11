@@ -20,6 +20,7 @@
 #include "tree.h"
 #include "creature.h"
 #include "colonist.h"
+#include "Pumpkin.h"
 #include <vector>
 
 typedef Angel::vec4  point4;
@@ -99,8 +100,10 @@ private:
 	cube*** map;//the map of the whole world
 	color4** selection;// the colors for selection
 	tree* trees;
+
 	std::vector<tree*>* treeList;// the trees are based on layers on wich they are grown
 	std::vector<colonist*> colonists;
+	std::vector<Pumpkin*> pumpkins;
 
 	GLuint trans, coloring;
 

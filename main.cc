@@ -18,7 +18,6 @@
 #include "camera.h"
 #include "output.h"
 #include "hud.h"
-#include "Pumpkin.h"
 #include <iostream>
 
 const int NumVertices = 36; //(6 faces)(2 triangles/face)(3 vertices/triangle)
@@ -50,8 +49,6 @@ bool drawHud = false;
 camera* cam;
 cube* baseCube;
 hud* info;
-Pumpkin* tesplant;
-
 
 world* w1;
 GLuint program, program2;
@@ -146,7 +143,6 @@ extern "C" void display() {
 		//	glBindVertexArray(vao);
 		w1->draw();
 		//baseCube->draw(true);
-		tesplant->draw(true);
 
 		if (drawHud) {
 			glUniform1i(simple, true);
@@ -206,7 +202,6 @@ void idle() {
 			std::cout << "controller was connected" << std::endl;
 		}
 	}
-	tesplant->update();
 	w1->update();
 	cam->moveCam();
 
@@ -294,10 +289,10 @@ extern "C" void mykey(unsigned char key, int mousex, int mousey) {
 		break;
 
 	case 'i':
-		tesplant->raisStem();
+
 		break;
 	case 'k':
-		tesplant->LowerStem();
+
 		break;
 
 	case 'o':
@@ -388,13 +383,7 @@ void myinit(){
 	w1->setColorloc(coloring);
 	w1->init();
 
-	tesplant = new Pumpkin();
-	tesplant->setindex(0);
-	tesplant->setLoc(vec3(0, 1, 0));
-	tesplant->setModelVeiw(Modeltrans);
-	tesplant->setColorloc(coloring);
-	
-	tesplant->init();
+
 
 	std::cout << "done creating objects" << std::endl;
 }
