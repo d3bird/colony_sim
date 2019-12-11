@@ -393,7 +393,12 @@ void world::processSelection(unsigned char PixelColor[], int btn) {
 		//set destination for action
 		if (direction) {
 			map[startLayer][oy][ox].setselected(true);
-			colonists[0]->addLocToQue(vec3(ox, startLayer, oy));
+			if (colonists[0]->isIdle()) {
+				colonists[0]->setTask(1, vec3(ox, startLayer, oy));
+			}
+			else {
+				colonists[0]->setTask(1,vec3(ox, startLayer, oy));
+			}
 		}
 		else if (mining) {
 			//map[startLayer][oy][ox].setselected(true);

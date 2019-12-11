@@ -22,13 +22,16 @@ public:
 	void setModelVeiw(GLuint i) { trans = i; }
 	void setColorloc(GLuint i) { coloring = i; }
 	void setindex(int i) { placeIndex = i; }
+	int getIndex() { return placeIndex; }
 
 	void calTranMat();
 	void setLoc(vec3 i);
 
 	void setGoal(vec3 i);
-	void createPathTo(vec3 i);
+	void createPathTo(vec3 i, bool add);
 	void addLocToQue(vec3 i);
+
+	bool ismoving() { return moving; }
 
 	void colorcube();
 	void MyQuad(int a, int b, int c, int d);
@@ -51,7 +54,7 @@ private:
 
 	void pathFiding();
 
-
+	bool moving;
 
 	//const values
 	double gridOfset = 0.27;

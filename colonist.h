@@ -2,13 +2,14 @@
 #include "Angel.h"
 #include "creature.h"
 #include <string>
+#include <random>
 
 class colonist : public creature{
 
 public:
 
 	colonist();
-	void update();
+	bool update();
 	void Cinit();
 
 	//preform the following task i at location il
@@ -21,7 +22,7 @@ public:
 	bool candoTask(int i);
 	int getSkill(int i);
 
-	
+	void wander();
 
 private:
 
@@ -36,5 +37,6 @@ private:
 	//is it currently going to a job
 	bool idle;
 	int task;
+	bool wandering;
 };
 

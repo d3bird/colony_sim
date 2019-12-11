@@ -37,6 +37,7 @@ creature::creature() {
 	destOffset = 0.02;
 	newGoal = false;
 	arivived = true;
+	moving = false;
 }
 
 void creature::draw() {
@@ -63,9 +64,22 @@ bool creature::update() {
 
 //create the path to the point given
 //for now it just adds it to the que, going stright to the point
-void creature::createPathTo(vec3 i) {
-	addLocToQue(i);
-
+void creature::createPathTo(vec3 i, bool add) {
+	if (add) {
+		//adds the point to que of points to move to
+		addLocToQue(i);
+	}
+	else {
+		//clears the points so that it can move directly to the job at hand
+		for (int i = 0; i < travelingPoints.size(); i++) {
+			travelingPoints.pop();
+		}
+		std::cout << "clearing moving points" << std::endl;
+		goal.x = loc.x;
+		goal.y = loc.y;
+		goal.z = loc.z;
+		addLocToQue(i);
+	}
 }
 
 //this function moves the creature through the queued up locations
@@ -78,6 +92,7 @@ void creature::pathFiding() {
 
 	//  }else{
 	if (std::sqrt(dot(dir, dir)) > 0.01) {
+		moving = true;
 		dir = (compute_time()) * movespeed; //* normalize(dir);
 		// Update location
 
@@ -105,6 +120,7 @@ void creature::pathFiding() {
 		if (travelingPoints.empty()) {
 			newGoal = false;
 			arivived = true;
+			moving = false;
 		}
 		else {
 			vec3 temp = travelingPoints.front();
