@@ -201,7 +201,20 @@ void idle() {
 	if (controler) {
 		controler = cam->processControllerInput();
 		w1->setGridLines(cam->getGrids());
-
+		if (cam->getdownlevel()) {
+			w1->decreaseLayer();
+		}
+		if (cam->getuplevel()) {
+			w1->increaseLayer();
+		}
+		if (cam->getselect()) {
+			w1->proccessMouse(0, GLUT_DOWN, 450, 450);
+		}
+		if (cam->getRselect()) {
+			w1->toggleMining();
+			w1->proccessMouse(0, GLUT_DOWN, 450, 450);
+			w1->toggleMining();
+		}
 	}
 	else {
 		controler = cam->connectControllerConected();

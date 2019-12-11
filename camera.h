@@ -34,10 +34,20 @@ public:
 	void Setmup() { mup = true; }
 	void Setmdown() { mdown = true; }
 
+	//getters for the controller
 	bool getGrids() { return grids; }
+	bool getdownlevel();
+	bool getuplevel();
+	bool getselect();
+	bool getRselect();
+	//last known mouse loc
+	int getLastX() { return lastX; }
+	int getLastY() { return lastY; }
 
+
+	//misc
 	mat4 getProjection() { return  projection; }
-
+	void restCursor();
 	void setWorldgenShaderProj(GLuint i) { Projection2 = i; }
 	void setWorldgenShaderModel(GLuint i) { Modelview2 = i; }
 	void setVAO2(GLuint i) { vao2 = i; }//not used yet
@@ -46,6 +56,10 @@ private:
 
 	//misc
 	bool grids;
+	bool downleval;
+	bool uplevel;
+	bool select;
+	bool rightselect;
 
 	//booleans for movments
 	bool mforward;
@@ -54,6 +68,15 @@ private:
 	bool mbackward;
 	bool mup;
 	bool mdown;
+
+
+	//buttons clicks for the controller
+	bool xdown;
+	bool leftbumber;
+	bool rightbumbr;
+	bool righttrigger;
+	bool lefttrigger;
+
 
 	//Everything to do with the camera
 	vec3 cameraPos;

@@ -49,6 +49,17 @@ camera::camera() {
 	controlerSensitivityL = 10;
 	invert_con_look = false;
 	grids = false;
+
+	xdown = false;
+	leftbumber = false;
+	rightbumbr = false;
+	righttrigger = false;
+	lefttrigger = false;
+
+	downleval = false;
+	uplevel = false;
+	select = false;
+	rightselect = false;
 }
 
 bool camera::connectControllerConected() {
@@ -89,6 +100,8 @@ bool camera::processControllerInput() {
 			float normRY = fmaxf(-1, (float)state.Gamepad.sThumbRY / 32767);
 
 			int buttons = state.Gamepad.wButtons;
+			int blt = state.Gamepad.bLeftTrigger;
+			int brt = state.Gamepad.bRightTrigger;
 			//std::cout << normRX << std::endl;
 
 			if (normLX >= 0.25) {
@@ -113,9 +126,42 @@ bool camera::processControllerInput() {
 			}
 
 			if (buttons == XINPUT_GAMEPAD_X) {
-				grids = !grids;
+				if (!xdown) {
+					grids = !grids;
+				}
+				xdown = true;
+			}
+			else {
+				xdown = false;
+			}
+			
+			if (buttons == XINPUT_GAMEPAD_RIGHT_SHOULDER) {
+				if (!rightbumbr) {
+					uplevel = true;
+
+				}
+				rightbumbr = true;
+			}
+			else {
+				rightbumbr = false;
 			}
 
+			if (buttons == XINPUT_GAMEPAD_LEFT_SHOULDER) {
+				if (!leftbumber) {
+					downleval = true;
+				}
+				leftbumber = true;
+			}
+			else {
+				leftbumber = false;
+			}
+			if (blt > 100) {
+				select = true;
+				//std::cout << blt << std::endl;
+			}
+			if (brt > 100) {
+				rightselect = true;
+			}
 			bool updatelook = false;
 			int xpos = lastX;// +(controlerSensitivityL * normRX);
 			int ypos = lastY;// +(controlerSensitivityL * normLX);
@@ -176,6 +222,14 @@ bool camera::processControllerInput() {
 		}
 	}
 
+}
+
+void camera::restCursor() {
+	int xpos = Wwidth / 2;
+	int ypos = Wwidth / 2;
+	lastX = xpos;
+	lastY = ypos;
+	glutWarpPointer(Wwidth / 2, Wheight / 2);
 }
 
 void camera::motion(int xpos, int ypos)
@@ -291,4 +345,37 @@ void camera::moveCam() {
 
 	mat4 view = LookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 	glUniformMatrix4fv(Modelview, 1, GL_TRUE, (view));
+}
+
+
+bool camera::getdownlevel() { 
+	if (downleval) {
+		downleval = false;
+		return true;
+	}
+	return downleval; 
+}
+
+bool camera::getuplevel() { 
+	if (uplevel) {
+		uplevel = false;
+		return true;
+	}
+	return uplevel; 
+}
+
+bool camera::getselect() {
+	if (select) {
+		select = false;
+		return true;
+	}
+	return select; 
+}
+
+bool camera::getRselect() {
+	if (rightselect) {
+		rightselect = false;
+		return true;
+	}
+	return rightselect;
 }
